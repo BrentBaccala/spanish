@@ -85,6 +85,8 @@ my $count = 0;				# El numero de respuestas hasta ahora
 my $engsel;				# Cadenas indicandas la dirreción
 my $spansel;				#   de transducción
 
+my $quickresponse = 0;
+
 # Si el usuario proveido un pregunta, busque por ella y escribe una respuesta
 
 if (exists($FORM{'word'})) {
@@ -95,6 +97,8 @@ if (exists($FORM{'word'})) {
 
     my $dbh;				# Asa de la base de datos
     my $sth;				# Asa de nuestro comando a la base
+
+    $quickresponse = 1;
 
     print "<P><HR><CENTER><H3>$query</H3></CENTER>\n";
     print "<TABLE>\n";
@@ -202,6 +206,9 @@ entered, to a maximum of 20, so it is possible to search for words
 by entering only their initial letters.  If no word in the diccionary
 matches the input, the server responds with the closest matching words.
 
+| unless $quickresponse;
+
+print qq|
 <P><CENTER><FORM ACTION=index.cgi>
 <INPUT TYPE=TEXT NAME=word>
 <SELECT NAME=DIRECTION>
@@ -210,6 +217,9 @@ matches the input, the server responds with the closest matching words.
 </SELECT>
 <INPUT TYPE=SUBMIT>
 </FORM></CENTER>
+|;
+
+print qq|
 
 <P><HR><P>
 
@@ -250,7 +260,9 @@ Spanish.
 <LI><A HREF="spanish.cgi?URL=user&userURL=http://aix1.uottawa.ca/~jmruano/sombrerodetrespicos.html&Translator=newworld-se">El Sombrero de Tres Picos</A>
 <LI><A HREF="spanish.cgi?URL=user&userURL=http://www.donquixote.com/&Translator=newworld-se">Don Quixote</A>
 </UL>
+| unless $quickresponse;
 
+print qq|
 </BODY>
 </HTML>
 |;

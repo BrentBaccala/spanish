@@ -8,6 +8,9 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.11  2001/05/13 03:22:25  baccala
+# Fixed word matching code so that (hopefully) it's now correct
+#
 # Revision 1.10  2001/05/13 03:05:08  baccala
 # Fix the A HREF rewrite so it handles unquoted HREF attributes correctly
 #
@@ -154,11 +157,11 @@ sub start {
     }
 
     if ($tag eq "base") {
+
 	$baseURL = $$attr{"href"};
 	$basesent ++;
-    }
 
-    if ($tag eq "a") {
+    } elsif (grep { $_ eq "href" } @$attrseq) {
 
 	$$attr{"href"} = &rewriteURL($$attr{"href"});
 

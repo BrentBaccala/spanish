@@ -69,8 +69,7 @@ sub text {
 
     if ($TAGS{"head"} == 0 and $TAGS{"a"} == 0) {
 
-#	$_[0] =~ s!\b(\w+)\b!<A HREF="/cgi-bin/translator.cgi?urltext=\1&lp=es_en" TARGET="_blank">\1</A>!go;
-	$_[0] =~ s!\b(\w+)\b!<A HREF="javascript:Tell('$transurl?urltext=\1&lp=es_en')">\1</A>!go;
+	$_[0] =~ s|\b(?<![&#])(\w+)\b|<A HREF="javascript:Tell('$transurl?urltext=\1&lp=es_en')">\1</A>|go;
 
     }
 

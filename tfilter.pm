@@ -7,7 +7,11 @@
 # marks up every word with a hypertext link to translate it from Spanish
 # to English.
 #
-# $Log$
+# $Log: tfilter.pm,v $
+# Revision 1.3  2001/04/09 04:11:39  baccala
+# Added explanatory comments; improved the link handling to rewrite
+# relative URLs as absolutes
+#
 #
 
 use strict;
@@ -67,14 +71,21 @@ sub new {
 
     $url = $urlin;
 
-    $self;
+    print qq'<HTML><HEAD><BASE href="$url"><SCRIPT LANGUAGE="javaScript">
+
+function Tell(url) 
+{
+    myWin= window.open(url, "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=460,height=460");
+}
+
+</SCRIPT>';
+
+    return $self;
 }
 
 # &start is called internally (by our superclass HTML::Filter) whenever
 # a start tag is seen.  In addition to keeping track of the tags (in TAGS),
 # we want to rewrite hypertext links so they'll go through our translator.
-# The superclass's &start only prints $origtext, so that's the only argument
-# we modify.
 
 sub rewriteURL {
     my ($linkurl) = @_;
@@ -93,17 +104,24 @@ sub start {
     my $self = shift;
     my ($tag, $attr, $attrseq, $origtext) = @_;
 
-    if (not exists $TAGS{lc $tag}) {
-	$TAGS{lc $tag} = 1;
+    $tag = lc $tag;
+
+    if (not exists $TAGS{$tag}) {
+	$TAGS{$tag} = 1;
     } else {
-	$TAGS{lc $tag} ++;
+	$TAGS{$tag} ++;
     }
 
-    if ((lc $tag) eq "base") {
-	# Add tag
+    if ($tag eq "html" or $tag eq "head" or $tag eq "base") {
+	# We already did these in our header...
+	return;
     }
 
-    if ((lc $tag) eq "a") {
+    if ($tag eq "a") {
+
+	# The superclass's &start only prints $origtext, so that's the
+	# only argument we modify.
+
 	$origtext =~ s!href="([^"]*)"!&rewriteURL("$1")!eio;
     }
 
@@ -117,17 +135,6 @@ sub start {
 sub end {
     my $self = shift;
     my ($tag, $origtext) = @_;
-
-    if ((lc $tag) eq "head") {
-	if (not $basesent) {
-	    print "<base href=\"$url\">\n";
-	    $basesent = 1;
-	}
-	if (not $scriptsent) {
-	    print $script;
-	    $scriptsent = 1;
-	}
-    }
 
     $TAGS{lc $tag} --;
 

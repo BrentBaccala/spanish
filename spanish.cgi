@@ -12,6 +12,12 @@
 # causing any linked-to page to be similarly marked up with translator links.
 #
 # $Log: spanish.cgi,v $
+# Revision 1.8  2001/05/14 02:31:43  baccala
+# Added ability to figure out URL we're called as ($myurl) instead of this
+# being hardwired.  Assumes all dependent scripts are in the same directory.
+#
+# Cleaned up code for "use strict" and updated comment at top of file
+#
 # Revision 1.7  2001/05/13 12:42:58  baccala
 # Canonicalize URL passed to us, for the sake of the BASE tags
 #
@@ -116,6 +122,8 @@ if ($response->is_success) {
     if ($content_type eq "text/html") {
 
 	my $p = tfilter->new($query, $transurl, $linkurl);
+
+	$content =~ s/<![^>]*>//g;
 
 	$p->parse($content);
 	$p->eof;

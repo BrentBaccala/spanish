@@ -8,6 +8,9 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.18  2002/05/07 19:40:32  baccala
+# Few changes to get the Queen Valera bible working
+#
 # Revision 1.17  2002/05/06 22:20:06  baccala
 # Check version of URI modules we're using and modify
 # arguments to uri_escape accordingly
@@ -144,9 +147,9 @@ sub new {
 
     print qq'<HTML><HEAD><BASE href="$url"><SCRIPT LANGUAGE="javaScript">
 
-function Tell(url) 
+function XzdY(word)
 {
-    myWin= window.open(url, "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=650,height=460");
+    myWin= window.open("$transurl" + word, "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=650,height=460");
 }
 
 </SCRIPT>';
@@ -266,7 +269,7 @@ sub markuptext {
 
     return $text if ($text =~ m:^[0-9]*$:);
 
-    return "<A HREF=\"javascript:Tell('$transurl$text')\">$text</A>";
+    return "<A HREF=\"javascript:XzdY('$text')\">$text</A>";
 }
 
 sub text {

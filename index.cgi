@@ -184,65 +184,67 @@ if (exists($FORM{'word'})) {
 # En todo caso, escribe un formulario HTML por el usuario usar a buscar
 # por una otra palabra.
 
-print "Para buscar por una palabra, escribela en el cuadro blanco abajo,\n";
-print "selecciona la dirreción de traducción, y clic al botón.\n";
-print "El servidor de red replicará con todas de las palabras que\n";
-print "comienzen con las letras escritas, a un maximo de 20, por consiguiente\n";
-print "es posible a buscar por las palabras por el escribir solo de las letras\n";
-print "primeras.  Si ninguna palabra en el diccionario corresponde\n";
-print "a la entrada, el servidor replicará con las palabras mas semajante\n";
+print qq|
+Para buscar por una palabra, escribela en el cuadro blanco abajo,
+selecciona la dirreción de traducción, y clic al botón.
+El servidor de red replicará con todas de las palabras que
+comienzen con las letras escritas, a un maximo de 20, por consiguiente
+es posible a buscar por las palabras por el escribir solo de las letras
+primeras.  Si ninguna palabra en el diccionario corresponde
+a la entrada, el servidor replicará con las palabras mas semajante
 
-print "<P>\n";
+<P>
 
-print "To search for a word, type it in the white space below, select\n";
-print "a direction for translation, and click on the button.  The web\n";
-print "server will respond with all the words that begin with the letters\n";
-print "entered, to a maximum of 20, so it is possible to search for words\n";
-print "by entering only their initial letters.  If no word in the diccionary\n";
-print "matches the input, the server responds with the closest matching words.\n";
+To search for a word, type it in the white space below, select
+a direction for translation, and click on the button.  The web
+server will respond with all the words that begin with the letters
+entered, to a maximum of 20, so it is possible to search for words
+by entering only their initial letters.  If no word in the diccionary
+matches the input, the server responds with the closest matching words.
 
-print "<P><CENTER><FORM ACTION=index.cgi>\n";
-print "<INPUT TYPE=TEXT NAME=word>\n";
-print "<SELECT NAME=DIRECTION>\n";
-print "<OPTION $engsel VALUE=engspan>de ingles a español\n";
-print "<OPTION $spansel VALUE=spaneng>de español a ingles\n";
-print "</SELECT>\n";
-print "<INPUT TYPE=SUBMIT>\n";
-print "</FORM></CENTER>\n";
+<P><CENTER><FORM ACTION=index.cgi>
+<INPUT TYPE=TEXT NAME=word>
+<SELECT NAME=DIRECTION>
+<OPTION $engsel VALUE=engspan>de ingles a español
+<OPTION $spansel VALUE=spaneng>de español a ingles
+</SELECT>
+<INPUT TYPE=SUBMIT>
+</FORM></CENTER>
 
-print "<P><HR><P>\n";
+<P><HR><P>
 
-print "Tambien, es posible a usar el diccionario vía a una programa que\n";
-print "ponga hipervínculos a todas de las palabras de una página de red.\n";
-print "El hacer clic a una de las palabras causa el aparición de una\n";
-print "ventana con la traducción de la palabra.  Para usar esta capacidad\n";
-print "introduce abajo la dirreción de red que quieras leer, selecciona\n";
-print "la dirreción de traducción, y clic al botón.\n";
+Tambien, es posible a usar el diccionario vía a una programa que
+ponga hipervínculos a todas de las palabras de una página de red.
+El hacer clic a una de las palabras causa el aparición de una
+ventana con la traducción de la palabra.  Para usar esta capacidad
+introduce abajo la dirreción de red que quieras leer, selecciona
+la dirreción de traducción, y clic al botón.
 
-print "<P>\n";
+<P>
 
-print "It is also possible to use the diccionary via a script that puts\n";
-print "hyperlinks on all the words on a web page.  Clicking on one of the\n";
-print "words causes a popup window to appear with the translation of the\n";
-print "word.  To use this feature, enter below the URL of the web page\n";
-print "you want to read, select the dirrection of translation, and click\n";
-print "the button.\n";
+It is also possible to use the diccionary via a script that puts
+hyperlinks on all the words on a web page.  Clicking on one of the
+words causes a popup window to appear with the translation of the
+word.  To use this feature, enter below the URL of the web page
+you want to read, select the dirrection of translation, and click
+the button.
 
-print "<P><CENTER><FORM ACTION=spanish.cgi>\n";
-print "<INPUT TYPE=HIDDEN NAME=URL VALUE=user>\n";
-print "<INPUT SIZE=50 TYPE=TEXT NAME=userURL VALUE=\"http://www.freesoft.org/\">\n";
-print "<SELECT NAME=Translator>\n";
-print "<OPTION $engsel VALUE=newworld-es>de ingles a español\n";
-print "<OPTION $spansel VALUE=newworld-se>de español a ingles\n";
-print "</SELECT>\n";
-print "<INPUT TYPE=SUBMIT>\n";
-print "</FORM></CENTER>\n";
-print "<CENTER>\n";
-print "<A HREF=\"spanish.cgi?URL=user&userURL=http://www.sgci.mec.es/uk/Pub/tecla.html&Translator=newworld-se\">Tecla</A>\n";
-print "<BR><A HREF=\"spanish.cgi?URL=user&userURL=http://www.elmundo.es/&Translator=newworld-se\">El Mundo</A>\n";
-print "<BR><A HREF=\"spanish.cgi?URL=user&userURL=http://aix1.uottawa.ca/~jmruano/sombrerodetrespicos.html&Translator=newworld-se\">El Sombrero de Tres Picos</A>\n";
-print "<BR><A HREF=\"spanish.cgi?URL=user&userURL=http://www.donquixote.com/&Translator=newworld-se\">Don Quixote</A>\n";
-print "</CENTER>\n";
+<P><CENTER><FORM ACTION=spanish.cgi>
+<INPUT TYPE=HIDDEN NAME=URL VALUE=user>
+<INPUT SIZE=50 TYPE=TEXT NAME=userURL VALUE="http://www.freesoft.org/">
+<SELECT NAME=Translator>
+<OPTION $engsel VALUE=newworld-es>de ingles a español
+<OPTION $spansel VALUE=newworld-se>de español a ingles
+</SELECT>
+<INPUT TYPE=SUBMIT>
+</FORM></CENTER>
+<CENTER>
+<A HREF="spanish.cgi?URL=user&userURL=http://www.sgci.mec.es/uk/Pub/tecla.html&Translator=newworld-se">Tecla</A>
+<BR><A HREF="spanish.cgi?URL=user&userURL=http://www.elmundo.es/&Translator=newworld-se">El Mundo</A>
+<BR><A HREF="spanish.cgi?URL=user&userURL=http://aix1.uottawa.ca/~jmruano/sombrerodetrespicos.html&Translator=newworld-se">El Sombrero de Tres Picos</A>
+<BR><A HREF="spanish.cgi?URL=user&userURL=http://www.donquixote.com/&Translator=newworld-se">Don Quixote</A>
+</CENTER>
 
-print "</BODY>\n";
-print "</HTML>\n";
+</BODY>
+</HTML>
+|;

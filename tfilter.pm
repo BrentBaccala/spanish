@@ -8,6 +8,10 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.7  2001/05/12 20:39:57  baccala
+# Added $linkprefix - variable passed into constructor to select
+# prefix to put before hypertext links
+#
 # Revision 1.6  2001/04/26 15:33:26  baccala
 # Also added a $linkurl argument to the constructor.
 #
@@ -133,6 +137,7 @@ sub start {
 	# only argument we modify.
 
 	$origtext =~ s!href="([^"]*)"!&rewriteURL("$1")!eio;
+	$origtext =~ s!href=(\w*)!&rewriteURL("$1")!eio;
     }
 
     $self->SUPER::start($tag, $attr, $attrseq, $origtext);

@@ -8,6 +8,11 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.10  2001/05/13 03:05:08  baccala
+# Fix the A HREF rewrite so it handles unquoted HREF attributes correctly
+#
+# Improved word matching code, but it's still not quite perfect
+#
 # Revision 1.9  2001/05/13 01:56:06  baccala
 # Leave the document's original BASE alone, just record it's value for
 # rewriting URLs.  Since we also put in a BASE tag of our own, this means
@@ -191,27 +196,33 @@ sub end {
 # &text is also called internally, for all non-tag text.  This includes text
 # within an open tag i.e, the text of a hypertext link.  So we check to
 # make sure we're not in the head of the document, or in an open hypertext
-# link, then run that funny regex that matches each word in the text,
-# excluding those preceeded by "&" or "#" and therefore probably HTML
-# specials.  Each word that matches gets a hypertext link stuck on it.
+# link, then run a regex that matches each word in the text and calls
+# &markuptext on it.  This function deals with special cases the
+# regex couldn't figure out, mainly "&nbsp;".  Each word gets a
+# hypertext link stuck on it.
+
+sub markuptext {
+    my ($text) = @_;
+
+    return "" if ($text eq "");
+
+    if ($text =~ m:(.*)&nbsp;(.*):) {
+	return &markuptext($1) . "&nbsp;" . &markuptext($2);
+    }
+
+    return $text if ($text =~ m:^[0-9]*$:);
+
+    return "<A HREF=\"javascript:Tell('$transurl$text')\">$text</A>";
+}
 
 sub text {
     my $self = shift;
 
     if ($TAGS{"head"} == 0 and $TAGS{"a"} == 0) {
 
-	# We want to match words in the HTML text and put hyperlinks around
-	# them.  This regex matches words that begin with an alpha character
-	# (but aren't preceded by & or # - that blocks &nbsp;) and contain
-	# alphanums, # and &, so HTML-escaped (&#nnn;) European characters
-	# can be embedded.  Since we setlocale "spanish" earlier, \w matches
-	# 8-bit accented chars, so we pick up ISO 8859 characters as well.
-	# However, if a word starts with an HTML-escaped European character,
-	# this regex currently fails to match it :-(
-
 	# Perl... the APL of the 21st century.
 
-	$_[0] =~ s|\b(?<![&#])([[:alpha:]][\w&#;]*)\b|<A HREF="javascript:Tell('$transurl$1')">$1</A>|go;
+	$_[0] =~ s|([\w&#;]+)|&markuptext($1)|ego;
 
     }
 

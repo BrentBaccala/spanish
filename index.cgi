@@ -238,12 +238,18 @@ the button.
 </SELECT>
 <INPUT TYPE=SUBMIT>
 </FORM></CENTER>
-<CENTER>
-<A HREF="spanish.cgi?URL=user&userURL=http://www.sgci.mec.es/uk/Pub/tecla.html&Translator=newworld-se">Tecla</A>
-<BR><A HREF="spanish.cgi?URL=user&userURL=http://www.elmundo.es/&Translator=newworld-se">El Mundo</A>
-<BR><A HREF="spanish.cgi?URL=user&userURL=http://aix1.uottawa.ca/~jmruano/sombrerodetrespicos.html&Translator=newworld-se">El Sombrero de Tres Picos</A>
-<BR><A HREF="spanish.cgi?URL=user&userURL=http://www.donquixote.com/&Translator=newworld-se">Don Quixote</A>
-</CENTER>
+
+<P>
+Here are some documents I recommend for native English readers learning
+Spanish.
+
+<P><UL>
+<LI><A HREF="spanish.cgi?URL=user&userURL=http://www.sgci.mec.es/uk/Pub/tecla.html&Translator=newworld-se">Tecla</A> - Texts for Teachers and Learners of Spanish
+<LI><A HREF="spanish.cgi?URL=user&userURL=http://www.elmundo.es/&Translator=newworld-se">El Mundo</A> - Madrid Newspaper
+<LI><A HREF="spanish.cgi?URL=user&userURL=http://www.freesoft.org/biblia/&Translator=newworld-se">La Biblia</A> (The Bible)
+<LI><A HREF="spanish.cgi?URL=user&userURL=http://aix1.uottawa.ca/~jmruano/sombrerodetrespicos.html&Translator=newworld-se">El Sombrero de Tres Picos</A>
+<LI><A HREF="spanish.cgi?URL=user&userURL=http://www.donquixote.com/&Translator=newworld-se">Don Quixote</A>
+</UL>
 
 </BODY>
 </HTML>

@@ -9,6 +9,10 @@
 # it through "tfilter" to mark all the text with links to a translator script.
 #
 # $Log: spanish.cgi,v $
+# Revision 1.6  2001/05/13 02:09:58  baccala
+# Fix inconsistency between script and index.htm page - use "URL"
+# throughout FORM data as name of target URL
+#
 # Revision 1.5  2001/05/12 22:30:57  baccala
 # Changed FORM variables so that the URL to link to is passed directly
 # in as a FORM variable.
@@ -24,6 +28,7 @@
 #
 
 require LWP;
+require URI;
 require tfilter;
 
 my $transurl;
@@ -64,10 +69,11 @@ foreach $pair (@pairs)
 }
 
 if ($FORM{"URL"} ne "user") {
-    $query = $FORM{"URL"};
+    $queryURI = new URI($FORM{"URL"});
 } else {
-    $query = $FORM{"userURL"};
+    $queryURI = new URI($FORM{"userURL"});
 }
+$query = $queryURI->canonical;
 
 
 if ($FORM{"Translator"} eq "wordreference") {

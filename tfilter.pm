@@ -8,6 +8,9 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.6  2001/04/26 15:33:26  baccala
+# Also added a $linkurl argument to the constructor.
+#
 # Revision 1.5  2001/04/26 15:11:04  baccala
 # Moved setting of $transurl into class constructor, where it gets
 # passed as an argument now.  Allows setting (from parent) of exact
@@ -52,7 +55,7 @@ setlocale(LC_CTYPE, "spanish");
 # (or non-existant) for any tag not currently "open".
 
 my $transurl;
-my $linkurl;
+my $linkprefix;
 
 my %TAGS;
 
@@ -64,19 +67,19 @@ my $scriptsent=0;
 # METHODS
 #
 
-# Constructor - invoke this class as tfilter->new($url, $transurl, $linkurl),
+# Constructor - invoke this class as tfilter->new($url, $transurl, $linkprefix),
 # where $url is the URL of the page being parsed, which we need to
 # know to add a BASE tag, and for expanding relative URLs into absolutes,
 # $transurl is the prefix to be put before the word in a transation link,
-# and $linkurl is the prefix to be put before http hypertext links.
+# and $linkprefix is the prefix to be put before http hypertext links.
 
 sub new {
-    my ($class, $urlin, $transurlin, $linkurlin) = @_;
+    my ($class, $urlin, $transurlin, $linkprefixin) = @_;
     my $self = $class->SUPER::new;
 
     $url = $urlin;
     $transurl = $transurlin;
-    $linkurl = $linkurlin;
+    $linkprefix = $linkprefixin;
 
     print qq'<HTML><HEAD><BASE href="$url"><SCRIPT LANGUAGE="javaScript">
 
@@ -101,7 +104,7 @@ sub rewriteURL {
     $absurl = URI->new_abs($linkurl, $url);
 
     if ($absurl->scheme eq "http") {
-	$absurl = $linkurl . $absurl;
+	$absurl = $linkprefix . $absurl;
     }
 
     return "href=\"$absurl\"";

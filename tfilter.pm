@@ -8,6 +8,11 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.9  2001/05/13 01:56:06  baccala
+# Leave the document's original BASE alone, just record it's value for
+# rewriting URLs.  Since we also put in a BASE tag of our own, this means
+# a document can end up with two BASE tags.  Yeow.  Netscape groks it, though.
+#
 # Revision 1.8  2001/05/12 20:48:45  baccala
 # Make sure we get HREF's that don't use quotes, i.e. <A HREF=AB>
 #
@@ -123,7 +128,7 @@ sub rewriteURL {
 	$absurl = $linkprefix . $absurl;
     }
 
-    return "href=\"$absurl\"";
+    return $absurl;
 }
 
 sub start {
@@ -150,11 +155,14 @@ sub start {
 
     if ($tag eq "a") {
 
-	# The superclass's &start only prints $origtext, so that's the
-	# only argument we modify.
+	$$attr{"href"} = &rewriteURL($$attr{"href"});
 
-	$origtext =~ s!href="([^"]*)"!&rewriteURL("$1")!eio;
-	#$origtext =~ s!href=(\w*)!&rewriteURL("$1")!eio;
+	# $origtext is what actually gets output, so reconstruct it from
+	# the attribute list and hash
+
+	$origtext = "<$tag ";
+	$origtext .= join ' ', map { $_ . '="' . $$attr{$_} . '"'} @$attrseq;
+	$origtext .= ">";
     }
 
     $self->SUPER::start($tag, $attr, $attrseq, $origtext);
@@ -192,9 +200,18 @@ sub text {
 
     if ($TAGS{"head"} == 0 and $TAGS{"a"} == 0) {
 
+	# We want to match words in the HTML text and put hyperlinks around
+	# them.  This regex matches words that begin with an alpha character
+	# (but aren't preceded by & or # - that blocks &nbsp;) and contain
+	# alphanums, # and &, so HTML-escaped (&#nnn;) European characters
+	# can be embedded.  Since we setlocale "spanish" earlier, \w matches
+	# 8-bit accented chars, so we pick up ISO 8859 characters as well.
+	# However, if a word starts with an HTML-escaped European character,
+	# this regex currently fails to match it :-(
+
 	# Perl... the APL of the 21st century.
 
-	$_[0] =~ s|\b(?<![&#])(\w+)\b|<A HREF="javascript:Tell('$transurl$1')">\1</A>|go;
+	$_[0] =~ s|\b(?<![&#])([[:alpha:]][\w&#;]*)\b|<A HREF="javascript:Tell('$transurl$1')">$1</A>|go;
 
     }
 

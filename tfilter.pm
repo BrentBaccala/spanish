@@ -8,6 +8,9 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.12  2001/05/13 04:08:34  baccala
+# Fixed HREF rewrite to do any HREF attribute, not just A tags
+#
 # Revision 1.11  2001/05/13 03:22:25  baccala
 # Fixed word matching code so that (hopefully) it's now correct
 #
@@ -53,6 +56,7 @@ use strict;
 package tfilter;
 
 require URI;
+use URI::Escape;
 
 # This makes our package a subclass of HTML::Filter, via the @ISA array,
 # which specifies superclasses.  Perl... the FORTH of the 21st century.
@@ -132,8 +136,11 @@ sub rewriteURL {
 
     $absurl = URI->new_abs($linkurl, $baseURL);
 
+    # We need to escape characters like "?" and "&" to prevent them
+    # from being interpreted as part of the first URL.
+
     if ($absurl->scheme eq "http") {
-	$absurl = $linkprefix . $absurl;
+	$absurl = $linkprefix . uri_escape($absurl, "^A-Za-z0-9");
     }
 
     return $absurl;

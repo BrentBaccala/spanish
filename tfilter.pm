@@ -8,6 +8,9 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.16  2001/07/10 17:45:38  baccala
+# Add : / and . to the list characters we leave alone in URLs
+#
 # Revision 1.15  2001/06/03 05:22:51  baccala
 # Nasty little bug - $1 and $2 got corrupted by the recursion
 #
@@ -70,6 +73,13 @@ package tfilter;
 
 require URI;
 use URI::Escape;
+
+# uri_escape handling changed in URI v1.13.  Figure out if we've got
+# an older or newer version and act accordingly
+
+my $old_uri_escape=0;
+eval { URI->VERSION("1.13"); };
+$old_uri_escape=1 if ($@);
 
 # This makes our package a subclass of HTML::Filter, via the @ISA array,
 # which specifies superclasses.  Perl... the FORTH of the 21st century.
@@ -156,7 +166,11 @@ sub rewriteURL {
     # a regular expression delineated by slashes
 
     if ($absurl->scheme eq "http") {
-	$absurl = $linkprefix . uri_escape($absurl, "^A-Za-z0-9:\\/\\.");
+	if ($old_uri_escape) {
+	    $absurl = $linkprefix . uri_escape($absurl, "^A-Za-z0-9:\\/\\.");
+	} else {
+	    $absurl = $linkprefix . uri_escape($absurl, "^A-Za-z0-9:/.");
+	}
     }
 
     return $absurl;

@@ -8,6 +8,12 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.14  2001/06/03 00:54:54  baccala
+# Changed so that now we sent our own BASE tag at the beginning of the document,
+# then another one if one is in the doc.  Netscape and Internet Explorer
+# both seem able to handle two BASEs in the same doc, and it makes the script
+# easier
+#
 # Revision 1.13  2001/05/13 05:04:47  baccala
 # Escape link URLs.  spanish.cgi already has code in it to handle
 # escape sequences in FORM data
@@ -211,8 +217,10 @@ sub markuptext {
 
     return "" if ($text eq "");
 
-    if ($text =~ m:(.*)&nbsp;(.*):) {
-	return &markuptext($1) . "&nbsp;" . &markuptext($2);
+    if ($text =~ m:^(.*)&nbsp;(.*)$:) {
+	my $initial = $1;
+	my $final = $2;
+	return &markuptext($initial) . "&nbsp;" . &markuptext($final);
     }
 
     return $text if ($text =~ m:^[0-9]*$:);

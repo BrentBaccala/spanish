@@ -8,6 +8,10 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.13  2001/05/13 05:04:47  baccala
+# Escape link URLs.  spanish.cgi already has code in it to handle
+# escape sequences in FORM data
+#
 # Revision 1.12  2001/05/13 04:08:34  baccala
 # Fixed HREF rewrite to do any HREF attribute, not just A tags
 #
@@ -84,14 +88,13 @@ my $linkprefix;
 my %TAGS;
 
 my $url;
-my $basesent=0;
 my $baseURL;
 
 #
 # METHODS
 #
 
-# Constructor - invoke this class as tfilter->new($url, $transurl, $linkprefix),
+# Constructor - invoke this class as tfilter->new($url, $transurl, $linkprefix)
 # where $url is the URL of the page being parsed, which we need to
 # know to add a BASE tag, and for expanding relative URLs into absolutes,
 # $transurl is the prefix to be put before the word in a transation link,
@@ -166,7 +169,6 @@ sub start {
     if ($tag eq "base") {
 
 	$baseURL = $$attr{"href"};
-	$basesent ++;
 
     } elsif (grep { $_ eq "href" } @$attrseq) {
 
@@ -191,14 +193,7 @@ sub end {
     my $self = shift;
     my ($tag, $origtext) = @_;
 
-    $tag = lc $tag;
-
-    $TAGS{$tag} --;
-
-    if ($tag eq "head" and not $basesent) {
-	print qq'<BASE href="$url">';
-	$basesent ++;
-    }
+    $TAGS{lc $tag} --    if ($TAGS{lc $tag} > 0);
 
     $self->SUPER::end(@_);
 }

@@ -8,6 +8,12 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.4  2001/04/09 05:26:18  baccala
+# Fixed relative references in the document head by putting our BASE tag
+# in at the very start of the document.  The code's a lot cleaner, at the
+# cost of introducing a big assumption - that the original document has
+# a HEAD section
+#
 # Revision 1.3  2001/04/09 04:11:39  baccala
 # Added explanatory comments; improved the link handling to rewrite
 # relative URLs as absolutes
@@ -40,7 +46,7 @@ setlocale(LC_CTYPE, "spanish");
 # incremented for a start tag, decremented for an end.  It should be zero
 # (or non-existant) for any tag not currently "open".
 
-my $transurl = "http://vyger.freesoft.org/cgi-bin/translator.cgi";
+my $transurl;
 
 my %TAGS;
 
@@ -48,34 +54,27 @@ my $url;
 my $basesent=0;
 my $scriptsent=0;
 
-my $script = '<SCRIPT LANGUAGE="javaScript">
-
-function Tell(url) 
-{
-    myWin= window.open(url, "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=460,height=460");
-}
-
-</SCRIPT>';
-
 #
 # METHODS
 #
 
-# Constructor - invoke this class as tfilter->new($url), where $url is
-# the URL of the page being parsed, which we need to know to add a BASE
-# tag, and for expanding relative URLs into absolutes.
+# Constructor - invoke this class as tfilter->new($url, $transurl),
+# where $url is the URL of the page being parsed, which we need to
+# know to add a BASE tag, and for expanding relative URLs into absolutes,
+# and $transurl is the prefix to be put before the word in a transation link.
 
 sub new {
-    my ($class, $urlin) = @_;
+    my ($class, $urlin, $transurlin) = @_;
     my $self = $class->SUPER::new;
 
     $url = $urlin;
+    $transurl = $transurlin;
 
     print qq'<HTML><HEAD><BASE href="$url"><SCRIPT LANGUAGE="javaScript">
 
 function Tell(url) 
 {
-    myWin= window.open(url, "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=460,height=460");
+    myWin= window.open(url, "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=650,height=460");
 }
 
 </SCRIPT>';
@@ -155,9 +154,11 @@ sub text {
 
 	# Perl... the APL of the 21st century.
 
-	$_[0] =~ s|\b(?<![&#])(\w+)\b|<A HREF="javascript:Tell('$transurl?urltext=\1&lp=es_en')">\1</A>|go;
+	$_[0] =~ s|\b(?<![&#])(\w+)\b|<A HREF="javascript:Tell('$transurl$1')">\1</A>|go;
 
     }
 
     $self->SUPER::text(@_);
 }
+
+1;

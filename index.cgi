@@ -104,7 +104,7 @@ if (exists($FORM{'word'})) {
     # retrocederemos a el uso de el archivo directamente.
 
     eval {
-	use DBI;
+	require DBI;
 
 	$dbh = DBI->connect("DBI:mysql:diccionario");
 	$sth = $dbh->prepare("SELECT word, definition FROM $table WHERE word LIKE ?");

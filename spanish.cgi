@@ -12,6 +12,9 @@
 # causing any linked-to page to be similarly marked up with translator links.
 #
 # $Log: spanish.cgi,v $
+# Revision 1.9  2001/07/10 17:46:00  baccala
+# Filter out XML <!if...> statements until HTML::Parser is fixed
+#
 # Revision 1.8  2001/05/14 02:31:43  baccala
 # Added ability to figure out URL we're called as ($myurl) instead of this
 # being hardwired.  Assumes all dependent scripts are in the same directory.
@@ -99,6 +102,10 @@ if ($FORM{"Translator"} eq "wordreference") {
     $transurl = "$myurl/diccionarios.cgi?";
 } elsif ($FORM{"Translator"} eq "vox") {
     $transurl = "$myurl/vox.cgi?";
+} elsif ($FORM{"Translator"} eq "newworld-es") {
+    $transurl = "$myurl/index.cgi?DIRECTION=engspan&word=";
+} elsif ($FORM{"Translator"} eq "newworld-se") {
+    $transurl = "$myurl/index.cgi?DIRECTION=spaneng&word=";
 } else {
     $FORM{"Translator"} = "babelfish";
     $transurl = "$myurl/translator.cgi?";
@@ -116,6 +123,12 @@ my $response = $ua->request($request);
 if ($response->is_success) {
     my $content_type = $response->content_type;
     my $content = $response->content;
+
+    # In the event of a redirect, we need to use the actual name of the 
+    # document, not the alias originally requested.  So we make sure that
+    # $query is the URI actually requested for the response.
+
+    $query = $response->request->uri;
 
     print "Content-type: $content_type\n\n";
 

@@ -9,6 +9,10 @@
 # it through "tfilter" to mark all the text with links to a translator script.
 #
 # $Log: spanish.cgi,v $
+# Revision 1.5  2001/05/12 22:30:57  baccala
+# Changed FORM variables so that the URL to link to is passed directly
+# in as a FORM variable.
+#
 # Revision 1.4  2001/05/12 20:38:01  baccala
 # Added ability to choose which translator to use
 #
@@ -59,8 +63,8 @@ foreach $pair (@pairs)
     $FORM{$name} = $value;
 }
 
-if ($FORM{"target"} ne "user") {
-    $query = $FORM{"target"};
+if ($FORM{"URL"} ne "user") {
+    $query = $FORM{"URL"};
 } else {
     $query = $FORM{"userURL"};
 }

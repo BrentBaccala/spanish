@@ -237,6 +237,12 @@ print "<OPTION $spansel VALUE=newworld-se>de español a ingles\n";
 print "</SELECT>\n";
 print "<INPUT TYPE=SUBMIT>\n";
 print "</FORM></CENTER>\n";
+print "<CENTER>\n";
+print "<A HREF=\"spanish.cgi?URL=user&userURL=http://www.sgci.mec.es/uk/Pub/tecla.html&Translator=newworld-se\">Tecla</A>\n";
+print "<BR><A HREF=\"spanish.cgi?URL=user&userURL=http://www.elmundo.es/&Translator=newworld-se\">El Mundo</A>\n";
+print "<BR><A HREF=\"spanish.cgi?URL=user&userURL=http://aix1.uottawa.ca/~jmruano/sombrerodetrespicos.html&Translator=newworld-se\">El Sombrero de Tres Picos</A>\n";
+print "<BR><A HREF=\"spanish.cgi?URL=user&userURL=http://www.donquixote.com/&Translator=newworld-se\">Don Quixote</A>\n";
+print "</CENTER>\n";
 
 print "</BODY>\n";
 print "</HTML>\n";

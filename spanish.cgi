@@ -9,6 +9,9 @@
 # it through "tfilter" to mark all the text with links to a translator script.
 #
 # $Log: spanish.cgi,v $
+# Revision 1.3  2001/04/26 15:11:54  baccala
+# Moved $transurl here from tfilter.pm
+#
 # Revision 1.2  2001/04/09 16:01:42  baccala
 # Added the ability to take POSTs as well as GETs
 #
@@ -16,8 +19,7 @@
 require LWP;
 require tfilter;
 
-#my $transurl = "http://www.wordreference.com/es/en/translation.asp?spen=";
-my $transurl = "http://www.diccionarios.com/cgi-bin/esp-engl.php?query=";
+my $transurl;
 
 my $query = "http://localhost/reading.html";
 
@@ -27,34 +29,57 @@ if (exists $ENV{"CONTENT_LENGTH"}) {
     # Get the input
     read(STDIN, $buffer, $ENV{'CONTENT_LENGTH'});
 
-    # Split the name-value pairs
-    @pairs = split(/&/, $buffer);
-
-    foreach $pair (@pairs)
-    {
-	($name, $value) = split(/=/, $pair);
-
-	# Un-Webify plus signs and %-encoding
-	$value =~ tr/+/ /;
-	$value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg;
-
-	# Stop people from using subshells to execute commands
-	# Not a big deal when using sendmail, but very important
-	# when using UCB mail (aka mailx).
-	# $value =~ s/~!/ ~!/g; 
-	# Uncomment for debugging purposes
-	# print "Setting $name to $value<P>";
-
-	$FORM{$name} = $value;
-    }
-
-    $query = $FORM{"URL"} if (exists $FORM{"URL"});
-
 } elsif (exists $ENV{"QUERY_STRING"}) {
 
-    $query = $ENV{"QUERY_STRING"};
+    $buffer = $ENV{"QUERY_STRING"};
 
 }
+
+# Split the name-value pairs
+@pairs = split(/&/, $buffer);
+
+foreach $pair (@pairs)
+{
+    ($name, $value) = split(/=/, $pair);
+
+    # Un-Webify plus signs and %-encoding
+    $value =~ tr/+/ /;
+    $value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg;
+
+    # Stop people from using subshells to execute commands
+    # Not a big deal when using sendmail, but very important
+    # when using UCB mail (aka mailx).
+    # $value =~ s/~!/ ~!/g; 
+    # Uncomment for debugging purposes
+    # print "Setting $name to $value<P>";
+
+    $FORM{$name} = $value;
+}
+
+if ($FORM{"target"} eq "Tecla") {
+    $query = "http://www.cec-spain.org.uk/Pub/textecla.html";
+} elsif ($FORM{"target"} eq "ElMundo") {
+    $query = "http://www.elmundo.es";
+} elsif ($FORM{"target"} eq "user") {
+    $query = $FORM{"userURL"};
+} elsif (exists $FORM{"URL"}) {
+    $query = $FORM{"URL"};
+}
+
+
+if ($FORM{"Translator"} eq "wordreference") {
+    $transurl = "http://www.wordreference.com/es/en/translation.asp?spen=";
+} elsif ($FORM{"Translator"} eq "diccionarios") {
+    #$transurl = "http://www.diccionarios.com/cgi-bin/esp-engl.php?URL=query%3D";
+    $transurl = "http://vyger.freesoft.org/cgi-bin/diccionarios.cgi?";
+} elsif ($FORM{"Translator"} eq "vox") {
+    $transurl = "http://vyger.freesoft.org/cgi-bin/vox.cgi?";
+} else {
+    $FORM{"Translator"} = "babelfish";
+    $transurl = "http://vyger.freesoft.org/cgi-bin/translator.cgi?";
+}
+
+my $linkurl = "http://vyger.freesoft.org/cgi-bin/spanish.cgi?Translator=$FORM{Translator}&URL=";
 
 $ua = LWP::UserAgent->new;
 
@@ -71,7 +96,7 @@ if ($response->is_success) {
 
     if ($content_type eq "text/html") {
 
-	$p = tfilter->new($query, $transurl);
+	$p = tfilter->new($query, $transurl, $linkurl);
 
 	$p->parse($content);
 	$p->eof;

@@ -9,6 +9,9 @@
 # it through "tfilter" to mark all the text with links to a translator script.
 #
 # $Log: spanish.cgi,v $
+# Revision 1.4  2001/05/12 20:38:01  baccala
+# Added ability to choose which translator to use
+#
 # Revision 1.3  2001/04/26 15:11:54  baccala
 # Moved $transurl here from tfilter.pm
 #
@@ -56,14 +59,10 @@ foreach $pair (@pairs)
     $FORM{$name} = $value;
 }
 
-if ($FORM{"target"} eq "Tecla") {
-    $query = "http://www.cec-spain.org.uk/Pub/textecla.html";
-} elsif ($FORM{"target"} eq "ElMundo") {
-    $query = "http://www.elmundo.es";
-} elsif ($FORM{"target"} eq "user") {
+if ($FORM{"target"} ne "user") {
+    $query = $FORM{"target"};
+} else {
     $query = $FORM{"userURL"};
-} elsif (exists $FORM{"URL"}) {
-    $query = $FORM{"URL"};
 }
 
 

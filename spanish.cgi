@@ -4,11 +4,17 @@
 #
 # Brent Baccala    baccala@freesoft.org
 #
-# This CGI script takes a URL either as a query string after a '?' (GET), or
-# as a form variable (POST).  It retreives the URL and (if it's HTML) runs
-# it through "tfilter" to mark all the text with links to a translator script.
+# This CGI script takes FORM data either as a query string after a '?' (GET),
+# or as content (POST).  The form variables specify a URL and a translator
+# script.  We retreive the URL and (if it's HTML) run it through "tfilter"
+# to mark every word in the text with a link to the translator script.  We
+# also change the links in the HTML so they point back to this script,
+# causing any linked-to page to be similarly marked up with translator links.
 #
 # $Log: spanish.cgi,v $
+# Revision 1.7  2001/05/13 12:42:58  baccala
+# Canonicalize URL passed to us, for the sake of the BASE tags
+#
 # Revision 1.6  2001/05/13 02:09:58  baccala
 # Fix inconsistency between script and index.htm page - use "URL"
 # throughout FORM data as name of target URL
@@ -27,47 +33,52 @@
 # Added the ability to take POSTs as well as GETs
 #
 
+use strict;
+
 require LWP;
 require URI;
 require tfilter;
 
+# $query is the URL to markup.  $transurl is the prefix to put before the
+# word to be translated.  $linkurl is the prefix to put before (escaped)
+# URLs.
+
+my $query;
 my $transurl;
+my $linkurl;
 
-my $query = "http://localhost/reading.html";
+# Relative URLs are a pain in this script.  We set a BASE tag on the document
+# to make relative URLs in the HTML point to the original documents.  That
+# means we can't use relative URLs to ourselves, so we need to know our URL...
 
+my $myurl = "http://$ENV{HTTP_HOST}$ENV{SCRIPT_NAME}";
+$myurl =~ s:/[^/]*$::;  # Strip off final slash and script name after it
+
+
+my %FORM;
+my $buffer;
 
 if (exists $ENV{"CONTENT_LENGTH"}) {
-
-    # Get the input
     read(STDIN, $buffer, $ENV{'CONTENT_LENGTH'});
-
 } elsif (exists $ENV{"QUERY_STRING"}) {
-
     $buffer = $ENV{"QUERY_STRING"};
-
 }
 
 # Split the name-value pairs
-@pairs = split(/&/, $buffer);
+my @pairs = split(/&/, $buffer);
 
-foreach $pair (@pairs)
+foreach my $pair (@pairs)
 {
-    ($name, $value) = split(/=/, $pair);
+    my ($name, $value) = split(/=/, $pair);
 
     # Un-Webify plus signs and %-encoding
     $value =~ tr/+/ /;
     $value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg;
 
-    # Stop people from using subshells to execute commands
-    # Not a big deal when using sendmail, but very important
-    # when using UCB mail (aka mailx).
-    # $value =~ s/~!/ ~!/g; 
-    # Uncomment for debugging purposes
-    # print "Setting $name to $value<P>";
-
     $FORM{$name} = $value;
 }
 
+my $queryURI;
 if ($FORM{"URL"} ne "user") {
     $queryURI = new URI($FORM{"URL"});
 } else {
@@ -79,23 +90,22 @@ $query = $queryURI->canonical;
 if ($FORM{"Translator"} eq "wordreference") {
     $transurl = "http://www.wordreference.com/es/en/translation.asp?spen=";
 } elsif ($FORM{"Translator"} eq "diccionarios") {
-    #$transurl = "http://www.diccionarios.com/cgi-bin/esp-engl.php?URL=query%3D";
-    $transurl = "http://vyger.freesoft.org/cgi-bin/diccionarios.cgi?";
+    $transurl = "$myurl/diccionarios.cgi?";
 } elsif ($FORM{"Translator"} eq "vox") {
-    $transurl = "http://vyger.freesoft.org/cgi-bin/vox.cgi?";
+    $transurl = "$myurl/vox.cgi?";
 } else {
     $FORM{"Translator"} = "babelfish";
-    $transurl = "http://vyger.freesoft.org/cgi-bin/translator.cgi?";
+    $transurl = "$myurl/translator.cgi?";
 }
 
-my $linkurl = "http://vyger.freesoft.org/cgi-bin/spanish.cgi?Translator=$FORM{Translator}&URL=";
+$linkurl = "$myurl/spanish.cgi?Translator=$FORM{Translator}&URL=";
 
-$ua = LWP::UserAgent->new;
+my $ua = LWP::UserAgent->new;
 
-$request = HTTP::Request->new("GET");
+my $request = HTTP::Request->new("GET");
 $request->uri($query);
 
-$response = $ua->request($request);
+my $response = $ua->request($request);
 
 if ($response->is_success) {
     my $content_type = $response->content_type;
@@ -105,7 +115,7 @@ if ($response->is_success) {
 
     if ($content_type eq "text/html") {
 
-	$p = tfilter->new($query, $transurl, $linkurl);
+	my $p = tfilter->new($query, $transurl, $linkurl);
 
 	$p->parse($content);
 	$p->eof;

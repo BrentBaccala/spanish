@@ -8,6 +8,10 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.17  2002/05/06 22:20:06  baccala
+# Check version of URI modules we're using and modify
+# arguments to uri_escape accordingly
+#
 # Revision 1.16  2001/07/10 17:45:38  baccala
 # Add : / and . to the list characters we leave alone in URLs
 #
@@ -207,6 +211,22 @@ sub start {
 	$origtext = "<$tag ";
 	$origtext .= join ' ', map { $_ . '="' . $$attr{$_} . '"'} @$attrseq;
 	$origtext .= ">";
+
+    } elsif ($tag eq "a") {
+
+	# Special case here - an A tag without an HREF doesn't count as an A
+
+	$TAGS{$tag} --;
+
+    }
+
+    if ($tag eq "body") {
+
+	# I've got at least one set of documents (the Queen Valera bible)
+	# that starts its BODY without ending its HEAD.  Sigh.
+
+	$TAGS{"head"} = 0;
+
     }
 
     $self->SUPER::start($tag, $attr, $attrseq, $origtext);

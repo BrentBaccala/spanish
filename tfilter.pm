@@ -8,6 +8,9 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.15  2001/06/03 05:22:51  baccala
+# Nasty little bug - $1 and $2 got corrupted by the recursion
+#
 # Revision 1.14  2001/06/03 00:54:54  baccala
 # Changed so that now we sent our own BASE tag at the beginning of the document,
 # then another one if one is in the doc.  Netscape and Internet Explorer
@@ -114,6 +117,8 @@ sub new {
     $transurl = $transurlin;
     $linkprefix = $linkprefixin;
 
+    $self->marked_sections(1);
+
     # We assume that the document's BASE it itself, until we find out otherwise
     # Note that we send a BASE tag in the header, then look for another BASE
     # tag in the original document, which takes precendence.  Thus we might
@@ -146,10 +151,12 @@ sub rewriteURL {
     $absurl = URI->new_abs($linkurl, $baseURL);
 
     # We need to escape characters like "?" and "&" to prevent them
-    # from being interpreted as part of the first URL.
+    # from being interpreted as part of the first URL.  The slash and
+    # the period need to be escaped because the string ends up inside
+    # a regular expression delineated by slashes
 
     if ($absurl->scheme eq "http") {
-	$absurl = $linkprefix . uri_escape($absurl, "^A-Za-z0-9");
+	$absurl = $linkprefix . uri_escape($absurl, "^A-Za-z0-9:\\/\\.");
     }
 
     return $absurl;

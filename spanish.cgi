@@ -8,12 +8,19 @@
 # as a form variable (POST).  It retreives the URL and (if it's HTML) runs
 # it through "tfilter" to mark all the text with links to a translator script.
 #
-# $Log$
+# $Log: spanish.cgi,v $
+# Revision 1.2  2001/04/09 16:01:42  baccala
+# Added the ability to take POSTs as well as GETs
+#
 
 require LWP;
 require tfilter;
 
-$query = "http://localhost/reading.html";
+#my $transurl = "http://www.wordreference.com/es/en/translation.asp?spen=";
+my $transurl = "http://www.diccionarios.com/cgi-bin/esp-engl.php?query=";
+
+my $query = "http://localhost/reading.html";
+
 
 if (exists $ENV{"CONTENT_LENGTH"}) {
 
@@ -64,7 +71,7 @@ if ($response->is_success) {
 
     if ($content_type eq "text/html") {
 
-	$p = tfilter->new($query);
+	$p = tfilter->new($query, $transurl);
 
 	$p->parse($content);
 	$p->eof;
@@ -74,10 +81,6 @@ if ($response->is_success) {
     }
 
 } else {
-
     print "Content-type: text/html\n\n";
-
-    print "!", $query, "!";
-
-    # print $response->error_as_HTML;
+    print $response->error_as_HTML;
 }

@@ -8,6 +8,9 @@
 # to English.
 #
 # $Log: tfilter.pm,v $
+# Revision 1.8  2001/05/12 20:48:45  baccala
+# Make sure we get HREF's that don't use quotes, i.e. <A HREF=AB>
+#
 # Revision 1.7  2001/05/12 20:39:57  baccala
 # Added $linkprefix - variable passed into constructor to select
 # prefix to put before hypertext links
@@ -65,7 +68,7 @@ my %TAGS;
 
 my $url;
 my $basesent=0;
-my $scriptsent=0;
+my $baseURL;
 
 #
 # METHODS
@@ -84,6 +87,15 @@ sub new {
     $url = $urlin;
     $transurl = $transurlin;
     $linkprefix = $linkprefixin;
+
+    # We assume that the document's BASE it itself, until we find out otherwise
+    # Note that we send a BASE tag in the header, then look for another BASE
+    # tag in the original document, which takes precendence.  Thus we might
+    # end up with two BASE tags - Netscape, at least, seems to be able to
+    # handle this.  The reason we have to put a BASE tag in right away is
+    # in case there are relative links in the HEAD (like style sheets).
+
+    $baseURL = $url;
 
     print qq'<HTML><HEAD><BASE href="$url"><SCRIPT LANGUAGE="javaScript">
 
@@ -105,7 +117,7 @@ sub rewriteURL {
     my ($linkurl) = @_;
     my $absurl;
 
-    $absurl = URI->new_abs($linkurl, $url);
+    $absurl = URI->new_abs($linkurl, $baseURL);
 
     if ($absurl->scheme eq "http") {
 	$absurl = $linkprefix . $absurl;
@@ -126,9 +138,14 @@ sub start {
 	$TAGS{$tag} ++;
     }
 
-    if ($tag eq "html" or $tag eq "head" or $tag eq "base") {
+    if ($tag eq "html" or $tag eq "head") {
 	# We already did these in our header...
 	return;
+    }
+
+    if ($tag eq "base") {
+	$baseURL = $$attr{"href"};
+	$basesent ++;
     }
 
     if ($tag eq "a") {
@@ -137,21 +154,28 @@ sub start {
 	# only argument we modify.
 
 	$origtext =~ s!href="([^"]*)"!&rewriteURL("$1")!eio;
-	$origtext =~ s!href=(\w*)!&rewriteURL("$1")!eio;
+	#$origtext =~ s!href=(\w*)!&rewriteURL("$1")!eio;
     }
 
     $self->SUPER::start($tag, $attr, $attrseq, $origtext);
 }
 
-# &end is called internally at an end tag.  In addition to decrementing TAGS,
-# we want to catch the end of the HTML head and insert some javascript,
-# as well as a BASE tag if one didn't already appear.
+# &end is called internally at an end tag.  In addition to decrementing
+# TAGS, we want to catch the end of the HTML head and insert a BASE tag
+# if one didn't already appear.
 
 sub end {
     my $self = shift;
     my ($tag, $origtext) = @_;
 
-    $TAGS{lc $tag} --;
+    $tag = lc $tag;
+
+    $TAGS{$tag} --;
+
+    if ($tag eq "head" and not $basesent) {
+	print qq'<BASE href="$url">';
+	$basesent ++;
+    }
 
     $self->SUPER::end(@_);
 }

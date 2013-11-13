@@ -72,7 +72,7 @@ print "<TITLE>New World Diccionario</TITLE>\n";
 print "</HEAD>\n";
 print "<BODY>\n";
 
-print "<CENTER><IMG SRC=\"header.gif\" WIDTH=317 HEIGHT=84></CENTER><P>\n";
+#print "<CENTER><IMG SRC=\"header.gif\" WIDTH=317 HEIGHT=84></CENTER><P>\n";
 
 # Inicialize varios variables
 
@@ -87,6 +87,38 @@ my $spansel;				#   de transducción
 
 my $quickresponse = 0;
 
+@subs = (['&complab;', '<font face="Wingdings">q</font> '],
+	 ['&idmlab;', '<font color="#238E1E">IDIOM</font> '],
+	 ['&idmslab;', '<font color="#238E1E">IDIOMS</font> '],
+	 ['&provlab;', '<font color="#238E1E">PROV</font> '],
+	 ['&sime;', '~'],
+	 ['&explab;', '<font color="#238E1E">EXPR</font> '],
+	 ['&diamo;', '<br>&nbsp;&nbsp;<font face="Wingdings">t</font> '],
+	 ['</RECORD>', ''],
+	 ['</?LV[0-4]>', ''],
+	 ['<CNJ>\\[(.+?)\\](.*?)</CNJ>', '<a href="cnj$1">Conjugaci\xf3n</a>$2'],
+	 ['</?(CPB|EXB|ENT|PUN|PRP|TSL)>', ''],
+	 ['<(BIT|CPA)>', '<B><I>'],
+	 ['</(BIT|CPA)>', '</I></B>'],
+	 ['<(/?)(EXA|FFA|IFA)>', '<$1B>'],
+	 ['<(GEN|GEO|GRA|PSA|RTY|SEA|SFA|SVA)>', '<I><font color="#AC0508">'],
+	 ['</(GEN|GEO|GRA|PSA|RTY|SEA|SFA|SVA)>', '</font></I>'],
+	 ['<(/?)SEB>', '<$1I>'],
+	 ['<(/?)HOM>', '<$1SUP>'],
+	 ['<(HWD|VAR|PHV|VPR)>', '<font color="#473D76" size=+2><b>'],
+	 ['<(HWD|VAR) CAT="PRD">', '<font color="#473D76" size=+2><b>'],
+	 ['</(HWD|PHV|SHD|VPR|VAR)>', '</b></font>'],
+	 ['<SHD>', '<font color="#473D76"><b>'],
+	 ['<IPA>', '<font size="+2" face="Chambers Harrap IPA">'],
+	 ['</IPA>', '</font>'],
+	 ['<REF NO="(.*?)">(.*?)</REF>', '<a href="$1">$2</a>'],
+#	 ['<SC>(.+?)</SC>', lambda x: x.group(1).upper()],
+	 ['<BOX TYP="USE">', '<br><br><br><table border="0" cellpadding="5" cellspacing="0" bgcolor="#EEEEEE" width="100%"><tr><td>'],
+	 ['<BOX TYP="CLT">(<B>.+?</B>)', '<br><br><br><table border="0" cellpadding="5" cellspacing="0" bgcolor="#EEEEEE" width="100%"><tr><td>$1<br><br>'],
+	 ['</BOX>', '</td></tr></table>'],
+	 ['<N>(.+?)</N>', '<br>&nbsp;&nbsp;<b>$1</b>']);
+
+
 # Si el usuario proveido un pregunta, busque por ella y escribe una respuesta
 
 if (exists($FORM{'word'})) {
@@ -98,9 +130,15 @@ if (exists($FORM{'word'})) {
     my $dbh;				# Asa de la base de datos
     my $sth;				# Asa de nuestro comando a la base
 
+    my $dbh_larousse;
+    my $sth_larousse;
+
     $quickresponse = 1;
 
     print "<P><HR><CENTER><H3>$query</H3></CENTER>\n";
+
+    print "<CENTER><IMG SRC=\"header.gif\" WIDTH=317 HEIGHT=84></CENTER><P>\n";
+
     print "<TABLE>\n";
 
     # Trate a usar paquete DBI y conecte a la base de datos "diccionario".
@@ -112,6 +150,17 @@ if (exists($FORM{'word'})) {
 
 	$dbh = DBI->connect("DBI:mysql:diccionario");
 	$sth = $dbh->prepare("SELECT word, definition FROM $table WHERE word LIKE ?");
+    };
+
+    eval {
+	require DBI;
+
+	my $dbfile;
+	$dbfile = "esspan.db" if ($table eq "engspan");
+	$dbfile = "sespan.db" if ($table eq "spaneng");
+
+	$dbh_larousse = DBI->connect("DBI:SQLite:$dbfile");
+	$sth_larousse = $dbh_larousse->prepare("SELECT word, entry FROM combined WHERE word LIKE ?");
     };
 
     # Dependiendo de el exito o falla de nuestro esfuerzo, crear la
@@ -149,6 +198,27 @@ if (exists($FORM{'word'})) {
 		$count ++;
 		last if ($limit == $count);
 	    }
+	}
+
+	sub trate_uno_larousse {
+
+	    $sth_larousse->execute($query . "%");
+
+	    print "</TABLE>\n";
+	    print "<CENTER><IMG SRC=\"larousse.jpg\" WIDTH=377 HEIGHT=126></CENTER><P>\n";
+	    print "<TABLE>\n";
+
+	    while ((@ary = $sth_larousse->fetchrow_array) > 0) {
+		my $entry = $ary[1];
+		foreach $sub (@subs) {
+		    $r = $$sub[1];
+		    $r =~ s/"/\\"/g;
+		    $entry =~ s/$$sub[0]/'"'.$r.'"'/gee;
+		}
+		print "<TR><TD>", $entry, "\n";
+		$count ++;
+		last if ($limit == $count);
+	    }
 
 	}
 
@@ -158,7 +228,10 @@ if (exists($FORM{'word'})) {
 
     LOOP: {
 	do {
-	    if (defined $sth) {
+	    if (defined $sth_larousse) {
+		&trate_uno_larousse;
+	    }
+	    elsif (defined $sth) {
 		&trate_uno_base;
 	    } else {
 		&trate_uno_archivo;

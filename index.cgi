@@ -137,10 +137,6 @@ if (exists($FORM{'word'})) {
 
     print "<P><HR><CENTER><H3>$query</H3></CENTER>\n";
 
-    print "<CENTER><IMG SRC=\"header.gif\" WIDTH=317 HEIGHT=84></CENTER><P>\n";
-
-    print "<TABLE>\n";
-
     # Trate a usar paquete DBI y conecte a la base de datos "diccionario".
     # Quiero este andar en una cláusula "eval" en caso de falla, cuando
     # retrocederemos a el uso de el archivo directamente.
@@ -204,10 +200,6 @@ if (exists($FORM{'word'})) {
 
 	    $sth_larousse->execute($query . "%");
 
-	    print "</TABLE>\n";
-	    print "<CENTER><IMG SRC=\"larousse.jpg\" WIDTH=377 HEIGHT=126></CENTER><P>\n";
-	    print "<TABLE>\n";
-
 	    while ((@ary = $sth_larousse->fetchrow_array) > 0) {
 		my $entry = $ary[1];
 		foreach $sub (@subs) {
@@ -215,7 +207,7 @@ if (exists($FORM{'word'})) {
 		    $r =~ s/"/\\"/g;
 		    $entry =~ s/$$sub[0]/'"'.$r.'"'/gee;
 		}
-		print "<TR><TD>", $entry, "\n";
+		print $entry, "\n";
 		$count ++;
 		last if ($limit == $count);
 	    }
@@ -225,6 +217,13 @@ if (exists($FORM{'word'})) {
     # Usando uno de los versiónes de "trate_uno", buscar por anotaciónes
     # correspondidas en la diccionario.  Mientras que no tenemos anotaciónes,
     # borre uno letro de el fin de la palabra y trate una otra vez.
+
+    if (defined $sth_larousse) {
+	print "<CENTER><IMG SRC=\"larousse.jpg\" WIDTH=377 HEIGHT=126></CENTER><P>\n";
+    } else {
+	print "<CENTER><IMG SRC=\"header.gif\" WIDTH=317 HEIGHT=84></CENTER><P>\n";
+	print "<TABLE>\n";
+    }
 
     LOOP: {
 	do {
@@ -242,7 +241,8 @@ if (exists($FORM{'word'})) {
 	} while ($querylen > 0);
     }
 
-    print "</TABLE>\n";
+    print "</TABLE>\n" if (not defined $sth_larousse);
+
     #print "<P>Output truncated at $limit items\n" if ($limit == $count);
     print "<P>Salida truncado a $limit elementos\n" if ($limit == $count);
 

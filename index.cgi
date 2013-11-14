@@ -32,6 +32,7 @@
 
 # NOTE:  Check the variables below the splits() for server specific paths 
 
+use Encode;
 
 # Lea la entrada
 
@@ -76,7 +77,7 @@ print "<BODY>\n";
 
 # Inicialize varios variables
 
-my $query = lc $FORM{'word'};		# La palabra por que buscamos
+my $query = lc decode("utf8", $FORM{'word'});		# La palabra por que buscamos
 my $querylen = length $query;		# La longitud de esta palabra
 
 my $limit = 20;				# El máximo numero de respuestas
@@ -111,6 +112,7 @@ my $quickresponse = 0;
 	 ['<SHD>', '<font color="#473D76"><b>'],
 	 ['<IPA>', '<font size="+2" face="Chambers Harrap IPA">'],
 	 ['</IPA>', '</font>'],
+# REF points to an ID tag in the dictionary
 	 ['<REF NO="(.*?)">(.*?)</REF>', '<a href="$1">$2</a>'],
 #	 ['<SC>(.+?)</SC>', lambda x: x.group(1).upper()],
 	 ['<BOX TYP="USE">', '<br><br><br><table border="0" cellpadding="5" cellspacing="0" bgcolor="#EEEEEE" width="100%"><tr><td>'],
@@ -156,7 +158,8 @@ if (exists($FORM{'word'})) {
 	$dbfile = "sespan.db" if ($table eq "spaneng");
 
 	$dbh_larousse = DBI->connect("DBI:SQLite:$dbfile");
-	$sth_larousse = $dbh_larousse->prepare("SELECT word, entry FROM combined WHERE word LIKE ?");
+#	$sth_larousse = $dbh_larousse->prepare("SELECT DISTINCT entry FROM combined WHERE word LIKE ?");
+	$sth_larousse = $dbh_larousse->prepare("SELECT DISTINCT entry FROM entry JOIN iword USING (id) WHERE word LIKE ?");
     };
 
     # Dependiendo de el exito o falla de nuestro esfuerzo, crear la
@@ -198,10 +201,12 @@ if (exists($FORM{'word'})) {
 
 	sub trate_uno_larousse {
 
-	    $sth_larousse->execute($query . "%");
+	    $sth_larousse->execute(encode("iso-8859-1", $query) . "%");
+
+	    # the @subs array contains $-expressions, so we convert it to a string and eval it
 
 	    while ((@ary = $sth_larousse->fetchrow_array) > 0) {
-		my $entry = $ary[1];
+		my $entry = $ary[0];
 		foreach $sub (@subs) {
 		    $r = $$sub[1];
 		    $r =~ s/"/\\"/g;

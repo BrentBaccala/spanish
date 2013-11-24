@@ -64,7 +64,7 @@ foreach $pair (@pairs)
 }
 
 # Escribe el content-type
-print "Content-type: text/html\n\n";
+print "Content-type: text/html; charset=iso-8859-1\n\n";
 
 # Escribe el encabezado HTML
 print "<HTML>\n";
@@ -77,7 +77,8 @@ print "<BODY>\n";
 
 # Inicialize varios variables
 
-my $query = lc decode("utf8", $FORM{'word'});		# La palabra por que buscamos
+#my $query = lc decode("utf8", $FORM{'word'});		# La palabra por que buscamos
+my $query = lc decode("iso-8859-1", $FORM{'word'});		# La palabra por que buscamos
 my $querylen = length $query;		# La longitud de esta palabra
 
 my $limit = 20;				# El máximo numero de respuestas

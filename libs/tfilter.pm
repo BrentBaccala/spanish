@@ -279,7 +279,7 @@ sub text {
 
 	# Perl... the APL of the 21st century.
 
-	$_[0] =~ s|([\w&#;]+)|&markuptext($1)|ego;
+	$_[0] =~ s|([\w&#;\x80-\xff]+)|&markuptext($1)|ego;
 
     }
 

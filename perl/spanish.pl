@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 #
-# Perl CGI script spanish.cgi
+# Perl CGI script spanish.pl
 #
 # Brent Baccala    baccala@freesoft.org
 #
@@ -99,19 +99,19 @@ $query = $queryURI->canonical;
 if ($FORM{"Translator"} eq "wordreference") {
     $transurl = "http://www.wordreference.com/es/en/translation.asp?spen=";
 } elsif ($FORM{"Translator"} eq "diccionarios") {
-    $transurl = "$myurl/diccionarios.cgi?";
+    $transurl = "$myurl/diccionarios.pl?";
 } elsif ($FORM{"Translator"} eq "vox") {
-    $transurl = "$myurl/vox.cgi?";
+    $transurl = "$myurl/vox.pl?";
 } elsif ($FORM{"Translator"} eq "newworld-es") {
-    $transurl = "$myurl/index.cgi?DIRECTION=engspan&word=";
+    $transurl = "$myurl/index.pl?DIRECTION=engspan&word=";
 } elsif ($FORM{"Translator"} eq "newworld-se") {
-    $transurl = "$myurl/index.cgi?DIRECTION=spaneng&word=";
+    $transurl = "$myurl/index.pl?DIRECTION=spaneng&word=";
 } else {
     $FORM{"Translator"} = "babelfish";
-    $transurl = "$myurl/translator.cgi?";
+    $transurl = "$myurl/translator.pl?";
 }
 
-$linkurl = "$myurl/spanish.cgi?Translator=$FORM{Translator}&URL=";
+$linkurl = "$myurl/spanish.pl?Translator=$FORM{Translator}&URL=";
 
 my $ua = LWP::UserAgent->new;
 

@@ -288,7 +288,7 @@ matches the input, the server responds with the closest matching words.
 | unless $quickresponse;
 
 print qq|
-<P><CENTER><FORM ACTION=index.cgi>
+<P><CENTER><FORM ACTION=index.pl>
 <INPUT TYPE=TEXT NAME=word>
 <SELECT NAME=DIRECTION>
 <OPTION $engsel VALUE=engspan>de ingles a español
@@ -318,7 +318,7 @@ word.  To use this feature, enter below the URL of the web page
 you want to read, select the dirrection of translation, and click
 the button.
 
-<P><CENTER><FORM ACTION=spanish.cgi>
+<P><CENTER><FORM ACTION=spanish.pl>
 <INPUT TYPE=HIDDEN NAME=URL VALUE=user>
 <INPUT SIZE=50 TYPE=TEXT NAME=userURL VALUE="http://www.freesoft.org/">
 <SELECT NAME=Translator>
@@ -333,11 +333,11 @@ Here are some documents I recommend for native English readers learning
 Spanish.
 
 <P><UL>
-<LI><A HREF="spanish.cgi?URL=user&userURL=http://www.sgci.mec.es/uk/Pub/tecla.html&Translator=newworld-se">Tecla</A> - Texts for Teachers and Learners of Spanish
-<LI><A HREF="spanish.cgi?URL=user&userURL=http://www.elmundo.es/&Translator=newworld-se">El Mundo</A> - Madrid Newspaper
-<LI><A HREF="spanish.cgi?URL=user&userURL=http://www.freesoft.org/biblia/&Translator=newworld-se">La Biblia</A> (The Bible)
-<LI><A HREF="spanish.cgi?URL=user&userURL=http://aix1.uottawa.ca/~jmruano/sombrerodetrespicos.html&Translator=newworld-se">El Sombrero de Tres Picos</A>
-<LI><A HREF="spanish.cgi?URL=user&userURL=http://www.donquixote.com/&Translator=newworld-se">Don Quixote</A>
+<LI><A HREF="spanish.pl?URL=user&userURL=http://www.sgci.mec.es/uk/Pub/tecla.html&Translator=newworld-se">Tecla</A> - Texts for Teachers and Learners of Spanish
+<LI><A HREF="spanish.pl?URL=user&userURL=http://www.elmundo.es/&Translator=newworld-se">El Mundo</A> - Madrid Newspaper
+<LI><A HREF="spanish.pl?URL=user&userURL=http://www.freesoft.org/biblia/&Translator=newworld-se">La Biblia</A> (The Bible)
+<LI><A HREF="spanish.pl?URL=user&userURL=http://aix1.uottawa.ca/~jmruano/sombrerodetrespicos.html&Translator=newworld-se">El Sombrero de Tres Picos</A>
+<LI><A HREF="spanish.pl?URL=user&userURL=http://www.donquixote.com/&Translator=newworld-se">Don Quixote</A>
 </UL>
 | unless $quickresponse;
 

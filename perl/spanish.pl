@@ -132,7 +132,7 @@ if ($response->is_success) {
 
     print "Content-type: $content_type\n\n";
 
-    if ($content_type eq "text/html") {
+    if ($content_type eq "text/html" or $content_type eq "text/xml") {
 
 	my $p = tfilter->new($query, $transurl, $linkurl);
 

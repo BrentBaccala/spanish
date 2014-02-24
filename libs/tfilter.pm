@@ -78,6 +78,8 @@ use strict;
 
 package tfilter;
 
+use translators;
+
 require URI;
 use URI::Escape;
 
@@ -103,12 +105,12 @@ use POSIX qw(locale_h);
 use locale;
 setlocale(LC_CTYPE, "spanish");
 
-# Class locale variables.  $transurl is the CGI script that actually does
-# the translation.  %TAGS is a hash that keeps an integer count of tags;
-# incremented for a start tag, decremented for an end.  It should be zero
-# (or non-existant) for any tag not currently "open".
+# Class locale variables.  $translator actually does the translation.
+# %TAGS is a hash that keeps an integer count of tags; incremented for
+# a start tag, decremented for an end.  It should be zero (or
+# non-existant) for any tag not currently "open".
 
-my $transurl;
+my $translator;
 my $linkprefix;
 
 my %TAGS;
@@ -120,19 +122,15 @@ my $baseURL;
 # METHODS
 #
 
-# Constructor - invoke this class as tfilter->new($url, $transurl, $linkprefix)
+# Constructor - invoke this class as tfilter->new($url, $translator, $linkprefix)
 # where $url is the URL of the page being parsed, which we need to
 # know to add a BASE tag, and for expanding relative URLs into absolutes,
-# $transurl is the prefix to be put before the word in a transation link,
+# $translator is a key into hashes that tell how to translate words
 # and $linkprefix is the prefix to be put before http hypertext links.
 
 sub new {
-    my ($class, $urlin, $transurlin, $linkprefixin) = @_;
+    (my $class, $url, $translator, $linkprefix) = @_;
     my $self = $class->SUPER::new;
-
-    $url = $urlin;
-    $transurl = $transurlin;
-    $linkprefix = $linkprefixin;
 
     $self->marked_sections(1);
 
@@ -149,7 +147,7 @@ sub new {
 
 function XzdY(word)
 {
-    myWin= window.open("$transurl" + word, "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=650,height=460");
+    myWin= window.open("$translator_url{$translator}" + word, "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=650,height=460");
 }
 
 </SCRIPT>';

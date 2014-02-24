@@ -48,6 +48,8 @@ require LWP;
 require URI;
 require tfilter;
 
+require translators;
+
 # $query is the URL to markup.  $transurl is the prefix to put before the
 # word to be translated.  $linkurl is the prefix to put before (escaped)
 # URLs.
@@ -96,10 +98,17 @@ if ($FORM{"URL"} ne "user") {
 $query = $queryURI->canonical;
 
 
-if ($FORM{"Translator"} eq "wordreference") {
+if ($FORM{"Translator"} eq "wordreference-se") {
     $transurl = "http://www.wordreference.com/es/en/translation.asp?spen=";
+} elsif ($FORM{"Translator"} eq "larousse-se") {
+    $transurl = "http://www.larousse.com/en/dictionaries/spanish-english/";
 } elsif ($FORM{"Translator"} eq "diccionarios") {
-    $transurl = "$myurl/diccionarios.pl?";
+    #$transurl = "$myurl/diccionarios.pl?";
+    $transurl = "http://www.diccionarios.com/detalle.php?palabra=";
+} elsif ($FORM{"Translator"} eq "collins-se") {
+    $transurl = "http://www.collinsdictionary.com/dictionary/spanish-english/";
+} elsif ($FORM{"Translator"} eq "wordmagic-se") {
+    $transurl = "http://www.wordmagicsoft.com/dictionary/es-en/";
 } elsif ($FORM{"Translator"} eq "vox") {
     $transurl = "$myurl/vox.pl?";
 } elsif ($FORM{"Translator"} eq "newworld-es") {
@@ -134,7 +143,7 @@ if ($response->is_success) {
 
     if ($content_type eq "text/html" or $content_type eq "text/xml") {
 
-	my $p = tfilter->new($query, $transurl, $linkurl);
+	my $p = tfilter->new($query, $FORM{"Translator"}, $linkurl);
 
 	$content =~ s/<![^>]*>//g;
 

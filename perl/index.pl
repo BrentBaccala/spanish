@@ -34,6 +34,8 @@
 
 use Encode;
 
+use translators;
+
 # Lea la entrada
 
 if (exists $ENV{'CONTENT_LENGTH'}) {
@@ -298,7 +300,8 @@ print qq|
 </FORM></CENTER>
 |;
 
-print qq|
+if (not $quickresponse) {
+    print qq|
 
 <P><HR><P>
 
@@ -322,8 +325,21 @@ the button.
 <INPUT TYPE=HIDDEN NAME=URL VALUE=user>
 <INPUT SIZE=50 TYPE=TEXT NAME=userURL VALUE="http://www.freesoft.org/">
 <SELECT NAME=Translator>
-<OPTION $engsel VALUE=newworld-es>de ingles a español
-<OPTION $spansel VALUE=newworld-se>de español a ingles
+|;
+
+    print "<OPTION disabled>de ingles a español -- english to spanish</OPTION>\n";
+
+    for my $name (@es_translators) {
+	print "<OPTION VALUE=\"$name\">$translator_name{$name}</OPTION>\n";
+    }
+
+    print "<OPTION disabled>de español a ingles -- spanish to english</OPTION>\n";
+
+    for my $name (@se_translators) {
+	print "<OPTION VALUE=\"$name\">$translator_name{$name}</OPTION>\n";
+    }
+
+    print qq|
 </SELECT>
 <INPUT TYPE=SUBMIT>
 </FORM></CENTER>
@@ -339,7 +355,8 @@ Spanish.
 <LI><A HREF="spanish.pl?URL=user&userURL=http://aix1.uottawa.ca/~jmruano/sombrerodetrespicos.html&Translator=newworld-se">El Sombrero de Tres Picos</A>
 <LI><A HREF="spanish.pl?URL=user&userURL=http://www.donquixote.com/&Translator=newworld-se">Don Quixote</A>
 </UL>
-| unless $quickresponse;
+|;
+}
 
 print qq|
 </BODY>

@@ -48,7 +48,7 @@ require LWP;
 require URI;
 require tfilter;
 
-require translators;
+use translators;
 
 # $query is the URL to markup.  $transurl is the prefix to put before the
 # word to be translated.  $linkurl is the prefix to put before (escaped)
@@ -98,26 +98,20 @@ if ($FORM{"URL"} ne "user") {
 $query = $queryURI->canonical;
 
 
-if ($FORM{"Translator"} eq "wordreference-se") {
-    $transurl = "http://www.wordreference.com/es/en/translation.asp?spen=";
-} elsif ($FORM{"Translator"} eq "larousse-se") {
-    $transurl = "http://www.larousse.com/en/dictionaries/spanish-english/";
-} elsif ($FORM{"Translator"} eq "diccionarios") {
-    #$transurl = "$myurl/diccionarios.pl?";
-    $transurl = "http://www.diccionarios.com/detalle.php?palabra=";
-} elsif ($FORM{"Translator"} eq "collins-se") {
-    $transurl = "http://www.collinsdictionary.com/dictionary/spanish-english/";
-} elsif ($FORM{"Translator"} eq "wordmagic-se") {
-    $transurl = "http://www.wordmagicsoft.com/dictionary/es-en/";
-} elsif ($FORM{"Translator"} eq "vox") {
-    $transurl = "$myurl/vox.pl?";
-} elsif ($FORM{"Translator"} eq "newworld-es") {
-    $transurl = "$myurl/index.pl?DIRECTION=engspan&word=";
-} elsif ($FORM{"Translator"} eq "newworld-se") {
-    $transurl = "$myurl/index.pl?DIRECTION=spaneng&word=";
+if (exists $translator_url{$FORM{"Translator"}}) {
+    $transurl = $translator_url{$FORM{"Translator"}};
 } else {
-    $FORM{"Translator"} = "babelfish";
-    $transurl = "$myurl/translator.pl?";
+    print q|Content-type: text/html
+
+<html>
+<head><title>An Error Occurred</title></head>
+<body>
+<h1>An Error Occurred</h1>
+<p>Translator unknown or missing</p>
+</body>
+</html>
+|;
+    exit;
 }
 
 $linkurl = "$myurl/spanish.pl?Translator=$FORM{Translator}&URL=";

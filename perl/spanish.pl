@@ -65,6 +65,7 @@ my $linkurl;
 my $myurl = "http://$ENV{HTTP_HOST}$ENV{SCRIPT_NAME}";
 $myurl =~ s:/[^/]*$::;  # Strip off final slash and script name after it
 
+&se("local Larousse SE", "$myurl/larousse.pl?DIRECTION=spaneng&word=");
 
 my %FORM;
 my $buffer;
@@ -96,7 +97,6 @@ if ($FORM{"URL"} ne "user") {
     $queryURI = new URI($FORM{"userURL"});
 }
 $query = $queryURI->canonical;
-
 
 if (exists $translator_url{$FORM{"Translator"}}) {
     $transurl = $translator_url{$FORM{"Translator"}};

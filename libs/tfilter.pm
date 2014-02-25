@@ -147,7 +147,7 @@ sub new {
 
 function XzdY(word)
 {
-    myWin= window.open("$translator_url{$translator}" + word, "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=650,height=460");
+    myWin= window.open("$translator_url{$translator}" + word + "$translator_suffix{$translator}", "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=650,height=460");
 }
 
 </SCRIPT>';

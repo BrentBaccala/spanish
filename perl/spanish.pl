@@ -46,8 +46,9 @@ use strict;
 
 require LWP;
 require URI;
-require tfilter;
 
+use lib "../libs";
+require tfilter;
 use translators;
 
 # $query is the URL to markup.  $transurl is the prefix to put before the

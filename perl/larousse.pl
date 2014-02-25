@@ -36,6 +36,7 @@ require DBI;
 
 use Encode;
 
+use lib "../libs";
 use translators;
 
 # Lea la entrada

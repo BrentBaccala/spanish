@@ -5,6 +5,7 @@
 
 use Encode;
 
+use lib "../libs";
 use translators;
 
 # Relative URLs are a pain in this script.  We set a BASE tag on the document

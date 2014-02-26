@@ -78,7 +78,7 @@ print "<TITLE>Larousse Gran Diccionario</TITLE>\n";
 print "</HEAD>\n";
 print "<BODY>\n";
 
-#print "<CENTER><IMG SRC=\"header.gif\" WIDTH=317 HEIGHT=84></CENTER><P>\n";
+print "<CENTER><IMG SRC=\"larousse.jpg\" WIDTH=377 HEIGHT=126></CENTER><P>\n";
 
 # Inicialize varios variables
 
@@ -125,10 +125,21 @@ my $spansel;				#   de transducción
 	 ['<N>(.+?)</N>', '<br>&nbsp;&nbsp;<b>$1</b>']);
 
 
-# Si el usuario proveido un pregunta, busque por ella y escribe una respuesta
+# The Larousse dictionary obfuscates its database entries with a
+# simple substitution cipher, so we need to translate words before
+# searching for them, and then translate the results back to display
+# them.
+
+sub translate {
+    my ($iword) = @_;
+
+    return pack "C*", map { 255 - $_ } unpack("C*", $iword);
+}
+
+# Verb conjugation table requested
 
 if (exists($FORM{'cnj'})) {
-    my $dbh = DBI->connect("DBI:SQLite:conjug.db");
+    my $dbh = DBI->connect("DBI:SQLite:data/conjug.db");
     $sth = $dbh->prepare("SELECT item FROM conjug WHERE num LIKE ?");
     $sth->execute($FORM{'cnj'});
     while ((@ary = $sth->fetchrow_array) > 0) {
@@ -162,8 +173,7 @@ my $dbfile;
 $dbfile = "esspan.db" if ($table eq "engspan");
 $dbfile = "sespan.db" if ($table eq "spaneng");
 
-$dbh_larousse = DBI->connect("DBI:SQLite:$dbfile");
-#$sth_larousse = $dbh_larousse->prepare("SELECT DISTINCT entry FROM combined WHERE word LIKE ?");
+$dbh_larousse = DBI->connect("DBI:SQLite:data/$dbfile");
 $sth_larousse = $dbh_larousse->prepare("SELECT DISTINCT entry FROM entry JOIN iword USING (id) WHERE word LIKE ?");
 
 # Dependiendo de el exito o falla de nuestro esfuerzo, crear la
@@ -172,12 +182,12 @@ $sth_larousse = $dbh_larousse->prepare("SELECT DISTINCT entry FROM entry JOIN iw
 
 sub trate_uno_larousse {
 
-    $sth_larousse->execute(encode("iso-8859-1", $query) . "%");
+    $sth_larousse->execute(&translate(encode("iso-8859-1", $query)) . "%");
 
     # the @subs array contains $-expressions, so we convert it to a string and eval it
 
     while ((@ary = $sth_larousse->fetchrow_array) > 0) {
-	my $entry = $ary[0];
+	my $entry = &translate($ary[0]);
 	foreach $sub (@subs) {
 	    $r = $$sub[1];
 	    $r =~ s/"/\\"/g;
@@ -189,8 +199,6 @@ sub trate_uno_larousse {
     }
 
 }
-
-print "<CENTER><IMG SRC=\"larousse.jpg\" WIDTH=377 HEIGHT=126></CENTER><P>\n";
 
 while ($querylen > 0 && $count == 0) {
     &trate_uno_larousse;

@@ -3,19 +3,8 @@
 # Programa por buscando en una diccionario Español/Ingles
 # escrito por Brent Baccala  <baccala@freesoft.org>  20 mar 2002
 
-use Encode;
-
 use lib "../libs";
 use translators;
-
-# Relative URLs are a pain in this script.  We set a BASE tag on the document
-# to make relative URLs in the HTML point to the original documents.  That
-# means we can't use relative URLs to ourselves, so we need to know our URL...
-
-my $myurl = "http://$ENV{HTTP_HOST}$ENV{SCRIPT_NAME}";
-$myurl =~ s:/[^/]*$::;  # Strip off final slash and script name after it
-
-&se("local Larousse SE", "$myurl/larousse.pl?DIRECTION=spaneng&word=");
 
 print qq|Content-type: text/html; charset=iso-8859-1
 

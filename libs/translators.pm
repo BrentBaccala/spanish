@@ -27,6 +27,8 @@ sub se {
     push @se_translators, $name;
     $translator_url{$name} = $url;
     $translator_suffix{$name} = $suffix;
+
+    return $name;
 }
 
 # Problems with accents
@@ -41,4 +43,8 @@ sub se {
 &se("Sensagent SE", "http://dictionnaire.sensagent.com/", "/es-en/");
 &se("Linguee", "http://www.linguee.com/english-spanish/search?sourceoverride=none&source=spanish&query=");
 &se("Eurocosm", "http://www.eurocosm.com/Eurocosm/AppEC/Pdcd/Phrasesearch2.asp?kw=", "&sl=E&styp=AND");
-#&se("local Larousse SE", "http://localhost/diccionario/index.cgi?DIRECTION=spaneng&word=");
+
+my $myurl = "http://$ENV{HTTP_HOST}$ENV{SCRIPT_NAME}";
+$myurl =~ s:/[^/]*$::;  # Strip off final slash and script name after it
+
+&se("local Larousse SE", "$myurl/larousse.pl?DIRECTION=spaneng&word=");

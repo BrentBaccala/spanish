@@ -17,16 +17,10 @@ print "<P>\n";
 
 print "<TABLE BORDER>\n";
 
-$i=0;
-foreach $variable (%ENV) {
-   if ($i == 0) {
-      print "<TR><TH>$variable</TH>\n";
-      $i=1;
-   } else {
-      print "<TD>$variable</TD></TR>\n";
-      $i=0;
-   }
+foreach $key (sort keys %ENV) {
+    print "<TR><TH>$key</TH><TD>$ENV{$key}</TD></TR>\n";
 }
+
 print "</TABLE>\n";
 
 print "</PRE>\n";

@@ -72,7 +72,7 @@ if (not exists $translator_url{$FORM{"Translator"} . $FORM{"Direction"}}) {
 
 # $linkurl is the prefix to put before (escaped) URLs.
 
-my $linkurl = "$myurl/spanish.pl?Translator=$FORM{Translator}&Direction=FORM{Direction}URL=";
+my $linkurl = "$myurl/spanish.pl?Translator=$FORM{Translator}&Direction=$FORM{Direction}&URL=";
 
 my $ua = LWP::UserAgent->new;
 

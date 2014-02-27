@@ -11,36 +11,6 @@
 # also change the links in the HTML so they point back to this script,
 # causing any linked-to page to be similarly marked up with translator links.
 #
-# $Log: spanish.cgi,v $
-# Revision 1.9  2001/07/10 17:46:00  baccala
-# Filter out XML <!if...> statements until HTML::Parser is fixed
-#
-# Revision 1.8  2001/05/14 02:31:43  baccala
-# Added ability to figure out URL we're called as ($myurl) instead of this
-# being hardwired.  Assumes all dependent scripts are in the same directory.
-#
-# Cleaned up code for "use strict" and updated comment at top of file
-#
-# Revision 1.7  2001/05/13 12:42:58  baccala
-# Canonicalize URL passed to us, for the sake of the BASE tags
-#
-# Revision 1.6  2001/05/13 02:09:58  baccala
-# Fix inconsistency between script and index.htm page - use "URL"
-# throughout FORM data as name of target URL
-#
-# Revision 1.5  2001/05/12 22:30:57  baccala
-# Changed FORM variables so that the URL to link to is passed directly
-# in as a FORM variable.
-#
-# Revision 1.4  2001/05/12 20:38:01  baccala
-# Added ability to choose which translator to use
-#
-# Revision 1.3  2001/04/26 15:11:54  baccala
-# Moved $transurl here from tfilter.pm
-#
-# Revision 1.2  2001/04/09 16:01:42  baccala
-# Added the ability to take POSTs as well as GETs
-#
 
 use strict;
 

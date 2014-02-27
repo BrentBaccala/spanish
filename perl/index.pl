@@ -25,8 +25,7 @@ the web page you want to read, select a translation dictionary, and
 click the button.
 
 <P><CENTER><FORM ACTION=spanish.pl>
-<INPUT TYPE=HIDDEN NAME=URL VALUE=user>
-<INPUT SIZE=50 TYPE=TEXT NAME=userURL VALUE="http://www.freesoft.org/biblia/">
+<INPUT SIZE=50 TYPE=TEXT NAME=URL VALUE="http://www.freesoft.org/biblia/">
 <SELECT NAME=Translator>
 |;
 
@@ -50,7 +49,7 @@ click the button.
 <SCRIPT TYPE="text/javascript">
 function setURL(url)
 {
-    document.forms[0].userURL.value = url;
+    document.forms[0].URL.value = url;
     return false;
 }
 </SCRIPT>

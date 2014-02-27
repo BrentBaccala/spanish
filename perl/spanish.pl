@@ -51,12 +51,6 @@ use lib "../libs";
 require tfilter;
 use translators;
 
-# $query is the URL to markup.  $linkurl is the prefix to put before
-# (escaped) URLs.
-
-my $query;
-my $linkurl;
-
 # Relative URLs are a pain in this script.  We set a BASE tag on the document
 # to make relative URLs in the HTML point to the original documents.  That
 # means we can't use relative URLs to ourselves, so we need to know our URL...
@@ -87,13 +81,10 @@ foreach my $pair (@pairs)
     $FORM{$name} = $value;
 }
 
-my $queryURI;
-if ($FORM{"URL"} ne "user") {
-    $queryURI = new URI($FORM{"URL"});
-} else {
-    $queryURI = new URI($FORM{"userURL"});
-}
-$query = $queryURI->canonical;
+# $query is the URL to markup.
+
+my $queryURI = new URI($FORM{"URL"});
+my $query = $queryURI->canonical;
 
 if (not exists $translator_url{$FORM{"Translator"}}) {
     print q|Content-type: text/html
@@ -109,7 +100,9 @@ if (not exists $translator_url{$FORM{"Translator"}}) {
     exit;
 }
 
-$linkurl = "$myurl/spanish.pl?Translator=$FORM{Translator}&URL=";
+# $linkurl is the prefix to put before (escaped) URLs.
+
+my $linkurl = "$myurl/spanish.pl?Translator=$FORM{Translator}&URL=";
 
 my $ua = LWP::UserAgent->new;
 

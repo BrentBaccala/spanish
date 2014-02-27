@@ -56,7 +56,7 @@ foreach my $pair (@pairs)
 my $queryURI = new URI($FORM{"URL"});
 my $query = $queryURI->canonical;
 
-if (not exists $translator_url{$FORM{"Translator"}}) {
+if (not exists $translator_url{$FORM{"Translator"} . $FORM{"Direction"}}) {
     print q|Content-type: text/html
 
 <html>
@@ -72,7 +72,7 @@ if (not exists $translator_url{$FORM{"Translator"}}) {
 
 # $linkurl is the prefix to put before (escaped) URLs.
 
-my $linkurl = "$myurl/spanish.pl?Translator=$FORM{Translator}&URL=";
+my $linkurl = "$myurl/spanish.pl?Translator=$FORM{Translator}&Direction=FORM{Direction}URL=";
 
 my $ua = LWP::UserAgent->new;
 
@@ -95,7 +95,7 @@ if ($response->is_success) {
 
     if ($content_type eq "text/html" or $content_type eq "text/xml") {
 
-	my $p = tfilter->new($query, $FORM{"Translator"}, $linkurl);
+	my $p = tfilter->new($query, $FORM{"Translator"} . $FORM{"Direction"}, $linkurl);
 
 	$content =~ s/<![^>]*>//g;
 

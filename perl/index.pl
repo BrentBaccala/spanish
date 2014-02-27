@@ -26,18 +26,14 @@ click the button.
 
 <P><CENTER><FORM ACTION=spanish.pl>
 <INPUT SIZE=50 TYPE=TEXT NAME=URL VALUE="http://www.freesoft.org/biblia/">
+<SELECT NAME=Direction>
+<OPTION SELECTED VALUE="SE">ES->EN</OPTION>
+<OPTION VALUE="ES">EN->ES</OPTION>
+</SELECT>
 <SELECT NAME=Translator>
 |;
 
-    print "<OPTION disabled>de ingles a español -- english to spanish</OPTION>\n";
-
-    for my $name (@es_translators) {
-	print "<OPTION VALUE=\"$name\">$name</OPTION>\n";
-    }
-
-    print "<OPTION disabled>de español a ingles -- spanish to english</OPTION>\n";
-
-    for my $name (@se_translators) {
+    for my $name (@translators) {
 	print "<OPTION VALUE=\"$name\">$name</OPTION>\n";
     }
 

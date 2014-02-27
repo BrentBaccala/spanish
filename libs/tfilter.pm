@@ -39,7 +39,7 @@ use POSIX qw(locale_h);
 use locale;
 setlocale(LC_CTYPE, "spanish");
 
-# Class locale variables.  $translator actually does the translation.
+# Class local variables.  $translator actually does the translation.
 # %TAGS is a hash that keeps an integer count of tags; incremented for
 # a start tag, decremented for an end.  It should be zero (or
 # non-existant) for any tag not currently "open".
@@ -68,7 +68,7 @@ sub new {
 
     $self->marked_sections(1);
 
-    # We assume that the document's BASE it itself, until we find out otherwise
+    # We assume that the document's BASE is itself, until we find out otherwise.
     # Note that we send a BASE tag in the header, then look for another BASE
     # tag in the original document, which takes precendence.  Thus we might
     # end up with two BASE tags - Netscape, at least, seems to be able to

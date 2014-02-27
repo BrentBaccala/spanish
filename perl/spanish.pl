@@ -51,12 +51,10 @@ use lib "../libs";
 require tfilter;
 use translators;
 
-# $query is the URL to markup.  $transurl is the prefix to put before the
-# word to be translated.  $linkurl is the prefix to put before (escaped)
-# URLs.
+# $query is the URL to markup.  $linkurl is the prefix to put before
+# (escaped) URLs.
 
 my $query;
-my $transurl;
 my $linkurl;
 
 # Relative URLs are a pain in this script.  We set a BASE tag on the document
@@ -97,9 +95,7 @@ if ($FORM{"URL"} ne "user") {
 }
 $query = $queryURI->canonical;
 
-if (exists $translator_url{$FORM{"Translator"}}) {
-    $transurl = $translator_url{$FORM{"Translator"}};
-} else {
+if (not exists $translator_url{$FORM{"Translator"}}) {
     print q|Content-type: text/html
 
 <html>

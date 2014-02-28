@@ -56,6 +56,13 @@ foreach my $pair (@pairs)
 my $queryURI = new URI($FORM{"URL"});
 my $query = $queryURI->canonical;
 
+# Backward compatibility with old syntax that seems to be bookmarked a lot
+
+if ($FORM{"Translator"} eq "newworld-se") {
+    $FORM{"Translator"} = "Larousse";
+    $FORM{"Direction"} = "SE";
+}
+
 if (not exists $translator_url{$FORM{"Translator"} . $FORM{"Direction"}}) {
     print q|Content-type: text/html
 

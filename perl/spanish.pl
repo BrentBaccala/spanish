@@ -56,6 +56,12 @@ foreach my $pair (@pairs)
 my $queryURI = new URI($FORM{"URL"});
 my $query = $queryURI->canonical;
 
+# Backward compatibility with old syntax
+
+if ($FORM{"URL"} eq "user" and exists $FORM{"userURL"}) {
+    $FORM{"URL"} = $FORM{"userURL"};
+}
+
 # Backward compatibility with old syntax that seems to be bookmarked a lot
 
 if ($FORM{"Translator"} eq "newworld-se") {

@@ -51,11 +51,6 @@ foreach my $pair (@pairs)
     $FORM{$name} = $value;
 }
 
-# $query is the URL to markup.
-
-my $queryURI = new URI($FORM{"URL"});
-my $query = $queryURI->canonical;
-
 # Backward compatibility with old syntax
 
 if ($FORM{"URL"} eq "user" and exists $FORM{"userURL"}) {
@@ -86,6 +81,11 @@ if (not exists $translator_url{$FORM{"Translator"} . $FORM{"Direction"}}) {
 # $linkurl is the prefix to put before (escaped) URLs.
 
 my $linkurl = "$myurl/spanish.pl?Translator=$FORM{Translator}&Direction=$FORM{Direction}&URL=";
+
+# $query is the URL to markup.
+
+my $queryURI = new URI($FORM{"URL"});
+my $query = $queryURI->canonical;
 
 my $ua = LWP::UserAgent->new;
 

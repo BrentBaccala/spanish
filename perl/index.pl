@@ -55,7 +55,12 @@ Here are some documents I recommend for native English readers learning
 Spanish.
 
 <P><UL>
-<LI><A HREF="javascript:void(0);" onclick="setURL('http://www.freesoft.org/biblia/')">La Biblia</A> (The Bible)
+<LI><A HREF="javascript:void(0);" onclick="setURL('http://www.freesoft.org/biblia/')">La Biblia Reina Valera</A>
+  - The Queen Valera Bible (with audio)
+<P>I suggest reading one chapter each day.  Read the chapter first in English, then in Spanish, looking
+up any words that you don't know.  Then listen to the audio recording of the chapter, and finally
+play the recording again, this time reading aloud from the text as you go.
+
 <LI><A HREF="javascript:void(0);" onclick="setURL('http://www.elmundo.es/')">El Mundo</A> - Madrid Newspaper
 <LI><A HREF="javascript:void(0);" onclick="setURL('http://aix1.uottawa.ca/~jmruano/sombrerodetrespicos.html')">El Sombrero de Tres Picos</A>
 <LI><A HREF="javascript:void(0);" onclick="setURL('http://www.donquixote.com/')">Don Quixote</A>

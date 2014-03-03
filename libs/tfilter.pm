@@ -207,7 +207,7 @@ sub markuptext {
 sub text {
     my $self = shift;
 
-    if ($TAGS{"head"} == 0 and $TAGS{"a"} == 0) {
+    if ($TAGS{"head"} == 0 and $TAGS{"a"} == 0 and $TAGS{"script"} == 0) {
 
 	# Perl... the APL of the 21st century.
 

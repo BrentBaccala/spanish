@@ -97,6 +97,8 @@ sub rewriteURL {
     my ($linkurl) = @_;
     my $absurl;
 
+    return $linkurl if ($linkurl =~ /\.css$/);
+
     $absurl = URI->new_abs($linkurl, $baseURL);
 
     # We need to escape characters like "?" and "&" to prevent them

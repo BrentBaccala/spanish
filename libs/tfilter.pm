@@ -84,7 +84,10 @@ function XzdY(word)
     myWin= window.open("$translator_url{$translator}" + word + "$translator_suffix{$translator}", "_translation", "scrollbars=yes,resizable=yes,toolbar=no,width=650,height=460");
 }
 
-</SCRIPT>';
+</SCRIPT>
+<STYLE>
+    a.XzdY { color:inherit; }
+</STYLE>';
 
     return $self;
 }
@@ -203,7 +206,7 @@ sub markuptext {
 
     return $text if ($text =~ m:^[0-9]*$:);
 
-    return "<A HREF=\"javascript:XzdY('$text')\">$text</A>";
+    return "<A CLASS=\"XzdY\" HREF=\"javascript:XzdY('$text')\">$text</A>";
 }
 
 sub text {

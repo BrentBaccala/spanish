@@ -82,10 +82,6 @@ print "<CENTER><IMG SRC=\"larousse.jpg\" WIDTH=377 HEIGHT=126></CENTER><P>\n";
 
 # Inicialize varios variables
 
-#my $query = lc decode("utf8", $FORM{'word'});		# La palabra por que buscamos
-my $query = lc decode("iso-8859-1", $FORM{'word'});		# La palabra por que buscamos
-my $querylen = length $query;		# La longitud de esta palabra
-
 my $limit = 20;				# El máximo numero de respuestas
 my $count = 0;				# El numero de respuestas hasta ahora
 
@@ -117,7 +113,7 @@ my $spansel;				#   de transducción
 	 ['<IPA>', '<font size="+2" face="Chambers Harrap IPA">'],
 	 ['</IPA>', '</font>'],
 # REF points to an ID tag in the dictionary
-	 ['<REF NO="(.*?)">(.*?)</REF>', '<a href="$1">$2</a>'],
+	 ['<REF NO="(.*?)">(.*?)</REF>', '<a href="larousse.pl?ref=$1&DIRECTION=$table">$2</a>'],
 #	 ['<SC>(.+?)</SC>', lambda x: x.group(1).upper()],
 	 ['<BOX TYP="USE">', '<br><br><br><table border="0" cellpadding="5" cellspacing="0" bgcolor="#EEEEEE" width="100%"><tr><td>'],
 	 ['<BOX TYP="CLT">(<B>.+?</B>)', '<br><br><br><table border="0" cellpadding="5" cellspacing="0" bgcolor="#EEEEEE" width="100%"><tr><td>$1<br><br>'],
@@ -149,7 +145,7 @@ if (exists($FORM{'cnj'})) {
     exit;
 }
 
-if (not exists($FORM{'word'})) {
+if (not exists($FORM{'word'}) and not exists($FORM{'ref'})) {
     print q|
 <h1>An Error Occurred</h1>
 <p>Word not specified</p>
@@ -167,14 +163,11 @@ my $table = $FORM{'DIRECTION'};	# Use la dirreción de transducción
 my $dbh_larousse;
 my $sth_larousse;
 
-print "<P><HR><CENTER><H3>$query</H3></CENTER>\n";
-
 my $dbfile;
 $dbfile = "esspan.db" if ($table eq "engspan");
 $dbfile = "sespan.db" if ($table eq "spaneng");
 
 $dbh_larousse = DBI->connect("DBI:SQLite:data/$dbfile");
-$sth_larousse = $dbh_larousse->prepare("SELECT DISTINCT entry FROM entry JOIN iword USING (id) WHERE word LIKE ?");
 
 # Dependiendo de el exito o falla de nuestro esfuerzo, crear la
 # subrutina "trate_uno", cuyo intento es a buscar todos de los
@@ -182,7 +175,9 @@ $sth_larousse = $dbh_larousse->prepare("SELECT DISTINCT entry FROM entry JOIN iw
 
 sub trate_uno_larousse {
 
-    $sth_larousse->execute(&translate(encode("iso-8859-1", $query)) . "%");
+    my ($query) = @_;
+
+    $sth_larousse->execute($query);
 
     # the @subs array contains $-expressions, so we convert it to a string and eval it
 
@@ -200,12 +195,31 @@ sub trate_uno_larousse {
 
 }
 
-while ($querylen > 0 && $count == 0) {
-    &trate_uno_larousse;
+if (exists $FORM{'word'}) {
+    my $query = lc decode("iso-8859-1", $FORM{'word'});	# La palabra por que buscamos
+    my $querylen = length $query;		# La longitud de esta palabra
 
-    $querylen --;
-    $query = substr($query,0,$querylen);
-} 
+    print "<P><HR><CENTER><H3>$query</H3></CENTER>\n";
+
+    $sth_larousse = $dbh_larousse->prepare("SELECT DISTINCT entry FROM entry JOIN iword USING (id) WHERE word LIKE ?");
+
+    while ($querylen > 0 && $count == 0) {
+	&trate_uno_larousse(&translate(encode("iso-8859-1", $query)) . "%");
+
+	$querylen --;
+	$query = substr($query,0,$querylen);
+    }
+
+} else {
+    my $query = $FORM{'ref'};
+
+    print "<P><HR><CENTER><H3>$query</H3></CENTER>\n";
+
+    $sth_larousse = $dbh_larousse->prepare("SELECT entry FROM entry WHERE id LIKE ?");
+
+    &trate_uno_larousse($query);
+}
+
 
 #print "<P>Output truncated at $limit items\n" if ($limit == $count);
 print "<P>Salida truncado a $limit elementos\n" if ($limit == $count);

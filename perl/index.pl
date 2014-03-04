@@ -69,6 +69,18 @@ play the recording again, this time reading aloud from the text as you go.
 <P>
 The script's source code is available in a <A HREF="https://github.com/BrentBaccala/spanish">GitHub repository</A>.
 
+<P>
+It can be used offline (without an Internet connection), so long as you have Perl and a web server.
+Set the web server to execute <tt>.pl</tt> files as CGI scripts.
+A local Spanish-English dictionary is also required.
+If you have the Larousse Gran Diccionario, you can copy (or link) its <TT>data</TT> directory into the script's
+<TT>perl</TT> directory, and it will become available as "local Larousse".
+
+<P STYLE="padding-left: 60%;">
+Brent Baccala
+<br><a href="http://www.freesoft.org/"><tt>freesoft.org</tt></a>
+</P>
+
 </BODY>
 </HTML>
 |;

@@ -112,9 +112,8 @@ my $spansel;				#   de transducción
 	 ['<SHD>', '<font color="#473D76"><b>'],
 	 ['<IPA>', '<font size="+2" face="Chambers Harrap IPA">'],
 	 ['</IPA>', '</font>'],
-# REF points to an ID tag in the dictionary
 	 ['<REF NO="(.*?)">(.*?)</REF>', '<a href="larousse.pl?ref=$1&DIRECTION=$table">$2</a>'],
-#	 ['<SC>(.+?)</SC>', lambda x: x.group(1).upper()],
+	 ['<SC>(.+?)</SC>', '\U$1\E'],
 	 ['<BOX TYP="USE">', '<br><br><br><table border="0" cellpadding="5" cellspacing="0" bgcolor="#EEEEEE" width="100%"><tr><td>'],
 	 ['<BOX TYP="CLT">(<B>.+?</B>)', '<br><br><br><table border="0" cellpadding="5" cellspacing="0" bgcolor="#EEEEEE" width="100%"><tr><td>$1<br><br>'],
 	 ['</BOX>', '</td></tr></table>'],

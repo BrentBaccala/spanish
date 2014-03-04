@@ -66,6 +66,9 @@ play the recording again, this time reading aloud from the text as you go.
 <LI><A HREF="javascript:void(0);" onclick="setURL('http://www.donquixote.com/')">Don Quixote</A>
 </UL>
 
+<P>
+The script's source code is available in a <A HREF="https://github.com/BrentBaccala/spanish">GitHub repository</A>.
+
 </BODY>
 </HTML>
 |;
